@@ -1,54 +1,77 @@
-import { useState } from 'react'; import Head from 'next/head';
+import { useState } from 'react';
 
-export default function Home() { const [waterType, setWaterType] = useState('Tap'); const [startEC, setStartEC] = useState(''); const [targetEC, setTargetEC] = useState(''); const [phase, setPhase] = useState('Veg'); const [intensity, setIntensity] = useState('Medium'); const [results, setResults] = useState(null);
+const feedChart = { Veg: { Light: 3, Medium: 4.5, Aggressive: 6.5, nutrient: 'MaxiGrow', }, 'Early Flower': { Light: 2, Medium: 3, Aggressive: 4, nutrient: 'MaxiBloom', }, 'Mid Flower': { Light: 2, Medium: 3, Aggressive: 4, nutrient: 'MaxiBloom+KoolBloom', koolbloomFactor: 0.25, }, 'Late Flower': { Light: 2, Medium: 3, Aggressive: 4, nutrient: 'MaxiBloom+KoolBloom', koolbloomFactor: 0.6, }, };
 
-const waterOptions = [ { value: 'RO', label: 'RO' }, { value: 'Distilled', label: 'Distilled' }, { value: 'Tap', label: 'Tap' }, { value: 'Rain', label: 'Rain' }, { value: 'Spring', label: 'Spring' } ];
+export default function Home() { const [waterType, setWaterType] = useState('Tap'); const [startingEC, setStartingEC] = useState(''); const [targetEC, setTargetEC] = useState(''); const [phase, setPhase] = useState('Veg'); const [intensity, setIntensity] = useState('Medium'); const [result, setResult] = useState(null);
 
-const phaseOptions = [ { value: 'Veg', label: 'Veg (MaxiGrow only)' }, { value: 'Early', label: 'Early Flower (MaxiBloom only)' }, { value: 'Mid', label: 'Mid Flower (MaxiBloom + KoolBloom)' } ];
+const handleConvert = () => { const ecStart = parseFloat(startingEC) || 0; const ecTarget = parseFloat(targetEC); if (isNaN(ecTarget) || ecTarget <= ecStart) { alert('Please enter a valid Target EC greater than Starting EC.'); return; }
 
-const intensityOptions = [ { value: 'Light', label: 'Light' }, { value: 'Medium', label: 'Medium' }, { value: 'Aggressive', label: 'Aggressive' } ];
+const ecNeeded = ecTarget - ecStart;
+const chart = feedChart[phase];
+const baseGrams = chart[intensity];
+const gramsPerEC = baseGrams / 1.5;
+const gramsNeeded = (ecNeeded * gramsPerEC).toFixed(2);
 
-const feedChart = { Veg: { Light: { ec: 2.1, grams: 3.8 }, Medium: { ec: 2.7, grams: 4.6 }, Aggressive: { ec: 3.3, grams: 5.8 } }, Early: { Light: { ec: 2.1, grams: 3.8 }, Medium: { ec: 2.7, grams: 4.6 }, Aggressive: { ec: 3.3, grams: 5.8 } }, Mid: { Light: { ec: 2.1, grams: 3.8 }, Medium: { ec: 2.7, grams: 4.6 }, Aggressive: { ec: 3.3, grams: 5.8 } } };
+let koolBloom = null;
+if (chart.nutrient.includes('KoolBloom')) {
+  const bloom = (gramsNeeded * (1 - chart.koolbloomFactor)).toFixed(2);
+  const kool = (gramsNeeded * chart.koolbloomFactor).toFixed(2);
+  koolBloom = kool;
+  setResult({ ec: ecTarget, ppm: Math.round(ecTarget * 500), bloom, kool });
+} else {
+  setResult({ ec: ecTarget, ppm: Math.round(ecTarget * 500), grams: gramsNeeded });
+}
 
-const calculateResults = () => { const start = parseFloat(startEC); const target = targetEC.includes('.') ? parseFloat(targetEC) : parseFloat(targetEC) / 500; const delta = target - start; const feed = feedChart[phase][intensity]; const ratio = delta / feed.ec; const grams = ratio * feed.grams; const ppm = Math.round(target * 500); const result = { EC: target.toFixed(2), PPM: ppm, resultText: phase === 'Veg' ? MaxiGrow: ${grams.toFixed(2)} g/gal : phase === 'Early' ? MaxiBloom: ${grams.toFixed(2)} g/gal : MaxiBloom: ${(grams * 0.84).toFixed(2)} g/gal\nKoolBloom: ${(grams * 0.16).toFixed(2)} g/gal }; setResults(result); };
+};
 
-return ( <div className="container"> <Head> <title>Chronic Worm Farmer Nutrient Calculator</title> </Head> <h1>Chronic Worm Farmer Nutrient Calculator</h1>
+return ( <div style={{ padding: '2rem', fontFamily: 'Arial' }}> <h1>Chronic Worm Farmer Nutrient Calculator</h1>
 
-<label>Water Type:</label>
-  <select value={waterType} onChange={(e) => setWaterType(e.target.value)}>
-    {waterOptions.map((option) => (
-      <option key={option.value} value={option.value}>{option.label}</option>
+<label>Water Type (for your own reference):</label>
+  <select value={waterType} onChange={e => setWaterType(e.target.value)}>
+    {['Tap', 'RO', 'Distilled', 'Spring', 'Rain', 'Well'].map(type => (
+      <option key={type} value={type}>{type}</option>
     ))}
   </select>
 
-  <label>Starting EC of Water:</label>
-  <input value={startEC} onChange={(e) => setStartEC(e.target.value)} />
+  <br /><br />
+  <label>Starting EC of Water (optional):</label>
+  <input value={startingEC} onChange={e => setStartingEC(e.target.value)} placeholder="e.g. 1.2" />
 
+  <br /><br />
   <label>Target EC or PPM:</label>
-  <input value={targetEC} onChange={(e) => setTargetEC(e.target.value)} />
+  <input value={targetEC} onChange={e => setTargetEC(e.target.value)} placeholder="e.g. 2.8 or 1400" />
 
+  <br /><br />
   <label>Nutrient Phase:</label>
-  <select value={phase} onChange={(e) => setPhase(e.target.value)}>
-    {phaseOptions.map((option) => (
-      <option key={option.value} value={option.value}>{option.label}</option>
+  <select value={phase} onChange={e => setPhase(e.target.value)}>
+    {Object.keys(feedChart).map(key => (
+      <option key={key} value={key}>{key}</option>
     ))}
   </select>
 
+  <br /><br />
   <label>Feed Chart Intensity:</label>
-  <select value={intensity} onChange={(e) => setIntensity(e.target.value)}>
-    {intensityOptions.map((option) => (
-      <option key={option.value} value={option.value}>{option.label}</option>
-    ))}
+  <select value={intensity} onChange={e => setIntensity(e.target.value)}>
+    <option value="Light">Light</option>
+    <option value="Medium">Medium</option>
+    <option value="Aggressive">Aggressive</option>
   </select>
 
-  <button onClick={calculateResults}>Convert</button>
+  <br /><br />
+  <button onClick={handleConvert}>Convert</button>
 
-  {results && (
-    <div>
+  {result && (
+    <div style={{ marginTop: '2rem' }}>
       <h2>Results:</h2>
-      <p><strong>EC:</strong> {results.EC}</p>
-      <p><strong>PPM (500 scale):</strong> {results.PPM}</p>
-      <p><strong>{results.resultText}</strong></p>
+      <p><strong>EC:</strong> {result.ec}</p>
+      <p><strong>PPM (500 scale):</strong> {result.ppm}</p>
+      {result.grams && <p><strong>{feedChart[phase].nutrient}:</strong> {result.grams} g/gal</p>}
+      {result.bloom && (
+        <>
+          <p><strong>MaxiBloom:</strong> {result.bloom} g/gal</p>
+          <p><strong>KoolBloom:</strong> {result.kool} g/gal</p>
+        </>
+      )}
     </div>
   )}
 </div>
