@@ -2,11 +2,18 @@ import { useState } from 'react';
 import Select from 'react-select';
 
 export default function Home() {
-  const [inputEC, setInputEC] = useState('');
+  const [inputValue, setInputValue] = useState('');
   const [startingEC, setStartingEC] = useState('');
-  const [ppm, setPPM] = useState('');
-  const [results, setResults] = useState(null);
   const [waterType, setWaterType] = useState(null);
+  const [phase, setPhase] = useState(null);
+  const [calculated, setCalculated] = useState(null);
+
+  const phaseOptions = [
+    { value: 'veg', label: 'Veg (MaxiGrow only)' },
+    { value: 'early', label: 'Early Flower (MaxiBloom only)' },
+    { value: 'mid', label: 'Mid Flower (MaxiBloom + low KoolBloom)' },
+    { value: 'late', label: 'Late Flower (MaxiBloom + full KoolBloom)' },
+  ];
 
   const waterOptions = [
     { value: 'Distilled', label: 'Distilled' },
@@ -20,24 +27,57 @@ export default function Home() {
   ];
 
   const calculate = () => {
-    const ec = parseFloat(inputEC);
+    const rawInput = inputValue.trim();
     const baseEC = parseFloat(startingEC) || 0;
-    const nutrientEC = ec - baseEC;
 
-    const ppmValue = Math.round(ec * 500);
-    const maxigrow = +(nutrientEC * 1.5).toFixed(2);
-    const maxibloom = +(nutrientEC * 1.3).toFixed(2);
-    const koolbloom = +(nutrientEC * 0.6).toFixed(2);
+    let targetEC = 0;
+    let ppm = 0;
 
-    setPPM(ppmValue);
-    setResults({ maxigrow, maxibloom, koolbloom });
+    // Detect EC or PPM based on input pattern
+    if (rawInput.includes('.') || parseInt(rawInput) < 20) {
+      // Treat as EC
+      targetEC = parseFloat(rawInput);
+      ppm = Math.round(targetEC * 500);
+    } else {
+      // Treat as PPM
+      ppm = parseInt(rawInput);
+      targetEC = +(ppm / 500).toFixed(2);
+    }
+
+    const nutrientEC = targetEC - baseEC;
+
+    // Nutrient calculations
+    let maxigrow = 0;
+    let maxibloom = 0;
+    let koolbloom = 0;
+
+    if (phase?.value === 'veg') {
+      maxigrow = +(nutrientEC * 1.5).toFixed(2);
+    } else if (phase?.value === 'early') {
+      maxibloom = +(nutrientEC * 1.3).toFixed(2);
+    } else if (phase?.value === 'mid') {
+      maxibloom = +(nutrientEC * 1.2).toFixed(2);
+      koolbloom = +(nutrientEC * 0.25).toFixed(2);
+    } else if (phase?.value === 'late') {
+      maxibloom = +(nutrientEC * 1.3).toFixed(2);
+      koolbloom = +(nutrientEC * 0.6).toFixed(2);
+    }
+
+    setCalculated({
+      targetEC,
+      ppm,
+      maxigrow,
+      maxibloom,
+      koolbloom
+    });
   };
 
   return (
-    <main style={{ padding: '1rem', fontFamily: 'sans-serif' }}>
+    <main style={{ padding: '1rem', fontFamily: 'sans-serif', maxWidth: '600px', margin: '0 auto' }}>
       <h1>Chronic Worm Farmer Nutrient Calculator</h1>
 
       <div style={{ marginBottom: '1rem' }}>
+        <label>Water Type:</label>
         <Select
           options={waterOptions}
           value={waterType}
@@ -47,30 +87,50 @@ export default function Home() {
         />
       </div>
 
-      <input
-        type="number"
-        placeholder="Enter your starting EC (e.g., 1.2)"
-        value={startingEC}
-        onChange={(e) => setStartingEC(e.target.value)}
-        style={{ marginBottom: '1rem', marginRight: '1rem' }}
-      />
+      <div style={{ marginBottom: '1rem' }}>
+        <label>Starting EC of Water:</label>
+        <input
+          type="number"
+          placeholder="e.g., 0.3"
+          value={startingEC}
+          onChange={(e) => setStartingEC(e.target.value)}
+          style={{ width: '100%' }}
+        />
+      </div>
 
-      <input
-        type="number"
-        placeholder="Enter target EC (e.g., 2.0)"
-        value={inputEC}
-        onChange={(e) => setInputEC(e.target.value)}
-        style={{ marginRight: '1rem' }}
-      />
+      <div style={{ marginBottom: '1rem' }}>
+        <label>Target EC or PPM:</label>
+        <input
+          type="text"
+          placeholder="Enter EC (e.g., 2.0) or PPM (e.g., 1000)"
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          style={{ width: '100%' }}
+        />
+      </div>
 
-      <button onClick={calculate}>Convert</button>
+      <div style={{ marginBottom: '1rem' }}>
+        <label>Nutrient Phase:</label>
+        <Select
+          options={phaseOptions}
+          value={phase}
+          onChange={setPhase}
+          placeholder="Select grow phase"
+        />
+      </div>
 
-      {results && (
+      <button onClick={calculate} style={{ padding: '0.5rem 1rem' }}>
+        Convert
+      </button>
+
+      {calculated && (
         <div style={{ marginTop: '1rem' }}>
-          <p><strong>PPM:</strong> {ppm}</p>
-          <p><strong>MaxiGrow:</strong> {results.maxigrow} g/gal</p>
-          <p><strong>MaxiBloom:</strong> {results.maxibloom} g/gal</p>
-          <p><strong>KoolBloom:</strong> {results.koolbloom} g/gal</p>
+          <h3>Results:</h3>
+          <p><strong>EC:</strong> {calculated.targetEC}</p>
+          <p><strong>PPM (500 scale):</strong> {calculated.ppm}</p>
+          {calculated.maxigrow > 0 && <p><strong>MaxiGrow:</strong> {calculated.maxigrow} g/gal</p>}
+          {calculated.maxibloom > 0 && <p><strong>MaxiBloom:</strong> {calculated.maxibloom} g/gal</p>}
+          {calculated.koolbloom > 0 && <p><strong>KoolBloom:</strong> {calculated.koolbloom} g/gal</p>}
         </div>
       )}
     </main>
