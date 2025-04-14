@@ -1,88 +1,57 @@
-import { useState } from 'react'; import Select from 'react-select';
+import { useState } from 'react'; import Head from 'next/head';
 
-export default function Home() { const [waterType, setWaterType] = useState({ value: 'Tap', label: 'Tap' }); const [startingEC, setStartingEC] = useState(''); const [targetECInput, setTargetECInput] = useState(''); const [nutrientPhase, setNutrientPhase] = useState(null); const [feedChartIntensity, setFeedChartIntensity] = useState(null); const [results, setResults] = useState(null);
+export default function Home() { const [waterType, setWaterType] = useState('Tap'); const [startEC, setStartEC] = useState(''); const [targetEC, setTargetEC] = useState(''); const [phase, setPhase] = useState('Veg'); const [intensity, setIntensity] = useState('Medium'); const [results, setResults] = useState(null);
 
-const waterOptions = [ { value: 'Tap', label: 'Tap' }, { value: 'RO', label: 'RO' }, { value: 'Distilled', label: 'Distilled' }, ];
+const waterOptions = [ { value: 'RO', label: 'RO' }, { value: 'Distilled', label: 'Distilled' }, { value: 'Tap', label: 'Tap' }, { value: 'Rain', label: 'Rain' }, { value: 'Spring', label: 'Spring' } ];
 
-const nutrientPhases = [ { value: 'veg', label: 'Veg (MaxiGrow only)' }, { value: 'early', label: 'Early Flower (MaxiBloom only)' }, { value: 'mid', label: 'Mid Flower (MaxiBloom + KoolBloom)' }, { value: 'late', label: 'Late Flower (MaxiBloom + KoolBloom)' }, ];
+const phaseOptions = [ { value: 'Veg', label: 'Veg (MaxiGrow only)' }, { value: 'Early', label: 'Early Flower (MaxiBloom only)' }, { value: 'Mid', label: 'Mid Flower (MaxiBloom + KoolBloom)' } ];
 
-const intensityLevels = [ { value: 'light', label: 'Light' }, { value: 'medium', label: 'Medium' }, { value: 'aggressive', label: 'Aggressive' }, ];
+const intensityOptions = [ { value: 'Light', label: 'Light' }, { value: 'Medium', label: 'Medium' }, { value: 'Aggressive', label: 'Aggressive' } ];
 
-const baseGrams = { veg: { light: 3.6, medium: 4.6, aggressive: 6.5, }, early: { light: 2.6, medium: 3.3, aggressive: 4.6, }, mid: { light: { bloom: 2.6, kool: 0.65 }, medium: { bloom: 3.3, kool: 0.85 }, aggressive: { bloom: 4.6, kool: 1.2 }, }, late: { light: { bloom: 1.75, kool: 1.3 }, medium: { bloom: 2.2, kool: 1.6 }, aggressive: { bloom: 3.3, kool: 2.4 }, }, };
+const feedChart = { Veg: { Light: { ec: 2.1, grams: 3.8 }, Medium: { ec: 2.7, grams: 4.6 }, Aggressive: { ec: 3.3, grams: 5.8 } }, Early: { Light: { ec: 2.1, grams: 3.8 }, Medium: { ec: 2.7, grams: 4.6 }, Aggressive: { ec: 3.3, grams: 5.8 } }, Mid: { Light: { ec: 2.1, grams: 3.8 }, Medium: { ec: 2.7, grams: 4.6 }, Aggressive: { ec: 3.3, grams: 5.8 } } };
 
-const calculate = () => { let isPPM = !targetECInput.includes('.') && parseInt(targetECInput) >= 20; const baseEC = parseFloat(startingEC) || 0; const targetEC = isPPM ? parseFloat(targetECInput) / 500 : parseFloat(targetECInput); const nutrientEC = targetEC - baseEC; const ppmValue = Math.round(targetEC * 500);
+const calculateResults = () => { const start = parseFloat(startEC); const target = targetEC.includes('.') ? parseFloat(targetEC) : parseFloat(targetEC) / 500; const delta = target - start; const feed = feedChart[phase][intensity]; const ratio = delta / feed.ec; const grams = ratio * feed.grams; const ppm = Math.round(target * 500); const result = { EC: target.toFixed(2), PPM: ppm, resultText: phase === 'Veg' ? MaxiGrow: ${grams.toFixed(2)} g/gal : phase === 'Early' ? MaxiBloom: ${grams.toFixed(2)} g/gal : MaxiBloom: ${(grams * 0.84).toFixed(2)} g/gal\nKoolBloom: ${(grams * 0.16).toFixed(2)} g/gal }; setResults(result); };
 
-let output = { ec: targetEC.toFixed(2), ppm: ppmValue };
-
-if (!nutrientPhase || !feedChartIntensity) return;
-
-const phase = nutrientPhase.value;
-const intensity = feedChartIntensity.value;
-
-if (phase === 'veg') {
-  const maxigrow = (nutrientEC / 2.5 * baseGrams.veg[intensity]).toFixed(2);
-  output.maxigrow = maxigrow;
-} else if (phase === 'early') {
-  const maxibloom = (nutrientEC / 2.5 * baseGrams.early[intensity]).toFixed(2);
-  output.maxibloom = maxibloom;
-} else if (phase === 'mid') {
-  const bloom = baseGrams.mid[intensity].bloom;
-  const kool = baseGrams.mid[intensity].kool;
-  const maxibloom = (nutrientEC / 2.5 * bloom).toFixed(2);
-  const koolbloom = (nutrientEC / 2.5 * kool).toFixed(2);
-  output.maxibloom = maxibloom;
-  output.koolbloom = koolbloom;
-} else if (phase === 'late') {
-  const bloom = baseGrams.late[intensity].bloom;
-  const kool = baseGrams.late[intensity].kool;
-  const maxibloom = (nutrientEC / 2.5 * bloom).toFixed(2);
-  const koolbloom = (nutrientEC / 2.5 * kool).toFixed(2);
-  output.maxibloom = maxibloom;
-  output.koolbloom = koolbloom;
-}
-
-setResults(output);
-
-};
-
-return ( <main style={{ padding: '1rem', fontFamily: 'Arial' }}> <h1>Chronic Worm Farmer Nutrient Calculator</h1>
+return ( <div className="container"> <Head> <title>Chronic Worm Farmer Nutrient Calculator</title> </Head> <h1>Chronic Worm Farmer Nutrient Calculator</h1>
 
 <label>Water Type:</label>
-  <Select options={waterOptions} value={waterType} onChange={setWaterType} />
+  <select value={waterType} onChange={(e) => setWaterType(e.target.value)}>
+    {waterOptions.map((option) => (
+      <option key={option.value} value={option.value}>{option.label}</option>
+    ))}
+  </select>
 
   <label>Starting EC of Water:</label>
-  <input
-    type="number"
-    value={startingEC}
-    onChange={(e) => setStartingEC(e.target.value)}
-  />
+  <input value={startEC} onChange={(e) => setStartEC(e.target.value)} />
 
   <label>Target EC or PPM:</label>
-  <input
-    type="text"
-    value={targetECInput}
-    onChange={(e) => setTargetECInput(e.target.value)}
-  />
+  <input value={targetEC} onChange={(e) => setTargetEC(e.target.value)} />
 
   <label>Nutrient Phase:</label>
-  <Select options={nutrientPhases} value={nutrientPhase} onChange={setNutrientPhase} />
+  <select value={phase} onChange={(e) => setPhase(e.target.value)}>
+    {phaseOptions.map((option) => (
+      <option key={option.value} value={option.value}>{option.label}</option>
+    ))}
+  </select>
 
   <label>Feed Chart Intensity:</label>
-  <Select options={intensityLevels} value={feedChartIntensity} onChange={setFeedChartIntensity} />
+  <select value={intensity} onChange={(e) => setIntensity(e.target.value)}>
+    {intensityOptions.map((option) => (
+      <option key={option.value} value={option.value}>{option.label}</option>
+    ))}
+  </select>
 
-  <button onClick={calculate}>Convert</button>
+  <button onClick={calculateResults}>Convert</button>
 
   {results && (
-    <div style={{ marginTop: '1rem' }}>
+    <div>
       <h2>Results:</h2>
-      <p><strong>EC:</strong> {results.ec}</p>
-      <p><strong>PPM (500 scale):</strong> {results.ppm}</p>
-      {results.maxigrow && <p><strong>MaxiGrow:</strong> {results.maxigrow} g/gal</p>}
-      {results.maxibloom && <p><strong>MaxiBloom:</strong> {results.maxibloom} g/gal</p>}
-      {results.koolbloom && <p><strong>KoolBloom:</strong> {results.koolbloom} g/gal</p>}
+      <p><strong>EC:</strong> {results.EC}</p>
+      <p><strong>PPM (500 scale):</strong> {results.PPM}</p>
+      <p><strong>{results.resultText}</strong></p>
     </div>
   )}
-</main>
+</div>
 
 ); }
 
