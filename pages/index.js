@@ -1,138 +1,113 @@
-import { useState } from 'react';
-import Select from 'react-select';
+import { useState } from 'react'; import Select from 'react-select';
 
-export default function Home() {
-  const [inputValue, setInputValue] = useState('');
-  const [startingEC, setStartingEC] = useState('');
-  const [waterType, setWaterType] = useState(null);
-  const [phase, setPhase] = useState(null);
-  const [calculated, setCalculated] = useState(null);
+export default function Home() { const [waterType, setWaterType] = useState(null); const [startingEC, setStartingEC] = useState(''); const [inputEC, setInputEC] = useState(''); const [ec, setEC] = useState(null); const [ppm, setPPM] = useState(null); const [results, setResults] = useState(null); const [phase, setPhase] = useState(null); const [feedChart, setFeedChart] = useState(null);
 
-  const phaseOptions = [
-    { value: 'veg', label: 'Veg (MaxiGrow only)' },
-    { value: 'early', label: 'Early Flower (MaxiBloom only)' },
-    { value: 'mid', label: 'Mid Flower (MaxiBloom + low KoolBloom)' },
-    { value: 'late', label: 'Late Flower (MaxiBloom + full KoolBloom)' },
-  ];
+const waterOptions = [ { value: 'Distilled', label: 'Distilled' }, { value: 'Filtered', label: 'Filtered' }, { value: 'Other', label: 'Other' }, { value: 'Rain', label: 'Rain' }, { value: 'RO', label: 'RO' }, { value: 'Spring', label: 'Spring' }, { value: 'Tap', label: 'Tap' }, { value: 'Well', label: 'Well' } ];
 
-  const waterOptions = [
-    { value: 'Distilled', label: 'Distilled' },
-    { value: 'Filtered', label: 'Filtered' },
-    { value: 'Other', label: 'Other' },
-    { value: 'Rain', label: 'Rain' },
-    { value: 'RO', label: 'RO' },
-    { value: 'Spring', label: 'Spring' },
-    { value: 'Tap', label: 'Tap' },
-    { value: 'Well', label: 'Well' }
-  ];
+const phaseOptions = [ { value: 'veg', label: 'Veg (MaxiGrow only)' }, { value: 'early', label: 'Early Flower (MaxiBloom only)' }, { value: 'mid', label: 'Mid Flower (MaxiBloom + KoolBloom)' }, { value: 'late', label: 'Late Flower (MaxiBloom + KoolBloom)' } ];
 
-  const calculate = () => {
-    const rawInput = inputValue.trim();
-    const baseEC = parseFloat(startingEC) || 0;
+const feedChartOptions = [ { value: 'light', label: 'Light' }, { value: 'medium', label: 'Medium' }, { value: 'aggressive', label: 'Aggressive' } ];
 
-    let targetEC = 0;
-    let ppm = 0;
+const calculate = () => { const ecVal = parseFloat(inputEC); const baseEC = parseFloat(startingEC) || 0; const ecDiff = ecVal - baseEC;
 
-    // Detect EC or PPM based on input pattern
-    if (rawInput.includes('.') || parseInt(rawInput) < 20) {
-      // Treat as EC
-      targetEC = parseFloat(rawInput);
-      ppm = Math.round(targetEC * 500);
-    } else {
-      // Treat as PPM
-      ppm = parseInt(rawInput);
-      targetEC = +(ppm / 500).toFixed(2);
-    }
+setEC(ecVal);
+setPPM(Math.round(ecVal * 500));
 
-    const nutrientEC = targetEC - baseEC;
+let maxigrow = 0;
+let maxibloom = 0;
+let koolbloom = 0;
 
-    // Nutrient calculations
-    let maxigrow = 0;
-    let maxibloom = 0;
-    let koolbloom = 0;
+let bloomMultiplier = 1.3;
+let koolMultiplier = 0.5;
 
-    if (phase?.value === 'veg') {
-      maxigrow = +(nutrientEC * 1.5).toFixed(2);
-    } else if (phase?.value === 'early') {
-      maxibloom = +(nutrientEC * 1.3).toFixed(2);
-    } else if (phase?.value === 'mid') {
-      maxibloom = +(nutrientEC * 1.2).toFixed(2);
-      koolbloom = +(nutrientEC * 0.25).toFixed(2);
-    } else if (phase?.value === 'late') {
-      maxibloom = +(nutrientEC * 1.3).toFixed(2);
-      koolbloom = +(nutrientEC * 0.6).toFixed(2);
-    }
+if (feedChart?.value === 'light') {
+  bloomMultiplier = 0.6;
+  koolMultiplier = 0.2;
+} else if (feedChart?.value === 'aggressive') {
+  bloomMultiplier = 1.5;
+  koolMultiplier = 0.6;
+}
 
-    setCalculated({
-      targetEC,
-      ppm,
-      maxigrow,
-      maxibloom,
-      koolbloom
-    });
-  };
+if (phase?.value === 'veg') {
+  maxigrow = +(ecDiff * 1.5).toFixed(2);
+} else if (phase?.value === 'early') {
+  maxibloom = +(ecDiff * bloomMultiplier).toFixed(2);
+} else if (phase?.value === 'mid' || phase?.value === 'late') {
+  maxibloom = +(ecDiff * bloomMultiplier).toFixed(2);
+  koolbloom = +(ecDiff * koolMultiplier).toFixed(2);
+}
 
-  return (
-    <main style={{ padding: '1rem', fontFamily: 'sans-serif', maxWidth: '600px', margin: '0 auto' }}>
-      <h1>Chronic Worm Farmer Nutrient Calculator</h1>
+setResults({ maxigrow, maxibloom, koolbloom });
 
-      <div style={{ marginBottom: '1rem' }}>
-        <label>Water Type:</label>
-        <Select
-          options={waterOptions}
-          value={waterType}
-          onChange={setWaterType}
-          placeholder="Select water type"
-          isClearable
-        />
-      </div>
+};
 
-      <div style={{ marginBottom: '1rem' }}>
-        <label>Starting EC of Water:</label>
-        <input
-          type="number"
-          placeholder="e.g., 0.3"
-          value={startingEC}
-          onChange={(e) => setStartingEC(e.target.value)}
-          style={{ width: '100%' }}
-        />
-      </div>
+return ( <main style={{ padding: '1rem', fontFamily: 'Arial' }}> <h1>Chronic Worm Farmer Nutrient Calculator</h1>
 
-      <div style={{ marginBottom: '1rem' }}>
-        <label>Target EC or PPM:</label>
-        <input
-          type="text"
-          placeholder="Enter EC (e.g., 2.0) or PPM (e.g., 1000)"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          style={{ width: '100%' }}
-        />
-      </div>
+<div style={{ marginBottom: '1rem' }}>
+    <label>Water Type:</label>
+    <Select
+      options={waterOptions}
+      value={waterType}
+      onChange={setWaterType}
+    />
+  </div>
 
-      <div style={{ marginBottom: '1rem' }}>
-        <label>Nutrient Phase:</label>
-        <Select
-          options={phaseOptions}
-          value={phase}
-          onChange={setPhase}
-          placeholder="Select grow phase"
-        />
-      </div>
+  <div style={{ marginBottom: '1rem' }}>
+    <label>Starting EC of Water:</label>
+    <input
+      type="number"
+      step="any"
+      value={startingEC}
+      onChange={(e) => setStartingEC(e.target.value)}
+    />
+  </div>
 
-      <button onClick={calculate} style={{ padding: '0.5rem 1rem' }}>
-        Convert
-      </button>
+  <div style={{ marginBottom: '1rem' }}>
+    <label>Target EC or PPM:</label>
+    <input
+      type="text"
+      value={inputEC}
+      onChange={(e) => setInputEC(e.target.value)}
+    />
+  </div>
 
-      {calculated && (
-        <div style={{ marginTop: '1rem' }}>
-          <h3>Results:</h3>
-          <p><strong>EC:</strong> {calculated.targetEC}</p>
-          <p><strong>PPM (500 scale):</strong> {calculated.ppm}</p>
-          {calculated.maxigrow > 0 && <p><strong>MaxiGrow:</strong> {calculated.maxigrow} g/gal</p>}
-          {calculated.maxibloom > 0 && <p><strong>MaxiBloom:</strong> {calculated.maxibloom} g/gal</p>}
-          {calculated.koolbloom > 0 && <p><strong>KoolBloom:</strong> {calculated.koolbloom} g/gal</p>}
-        </div>
+  <div style={{ marginBottom: '1rem' }}>
+    <label>Nutrient Phase:</label>
+    <Select
+      options={phaseOptions}
+      value={phase}
+      onChange={setPhase}
+    />
+  </div>
+
+  <div style={{ marginBottom: '1rem' }}>
+    <label>Feed Chart Intensity:</label>
+    <Select
+      options={feedChartOptions}
+      value={feedChart}
+      onChange={setFeedChart}
+    />
+  </div>
+
+  <button onClick={calculate}>Convert</button>
+
+  {results && (
+    <div style={{ marginTop: '1.5rem' }}>
+      <h2>Results:</h2>
+      <p><strong>EC:</strong> {ec}</p>
+      <p><strong>PPM (500 scale):</strong> {ppm}</p>
+      {results.maxigrow > 0 && (
+        <p><strong>MaxiGrow:</strong> {results.maxigrow} g/gal</p>
       )}
-    </main>
-  );
-          }
+      {results.maxibloom > 0 && (
+        <p><strong>MaxiBloom:</strong> {results.maxibloom} g/gal</p>
+      )}
+      {results.koolbloom > 0 && (
+        <p><strong>KoolBloom:</strong> {results.koolbloom} g/gal</p>
+      )}
+    </div>
+  )}
+</main>
+
+); }
+
