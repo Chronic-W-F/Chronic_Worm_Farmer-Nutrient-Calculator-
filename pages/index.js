@@ -1,39 +1,46 @@
-import React, { useState } from "react"; import ReactDOM from "react-dom";
+import React, { useState } from "react"; import { createRoot } from "react-dom/client"; import "./styles.css";
 
-const feedCharts = { Veg: { Light: 4.0, Medium: 5.2, Aggressive: 6.5, }, "Early Flower": { Light: 3.5, Medium: 4.5, Aggressive: 5.5, }, "Mid Flower": { Light: 3.5, Medium: 4.5, Aggressive: 5.5, }, "Late Flower": { Light: 3.0, Medium: 4.0, Aggressive: 5.0, }, };
+const feedChart = { Veg: { Light: 3.8, Medium: 4.8, Aggressive: 6.5, }, "Early Flower": { Light: 3.2, Medium: 4.0, Aggressive: 5.5, }, "Mid Flower": { Light: 3.2, Medium: 4.0, Aggressive: 5.5, }, "Late Flower": { Light: 2.6, Medium: 3.3, Aggressive: 4.5, }, };
 
-function App() { const [waterType, setWaterType] = useState("Tap"); const [startEC, setStartEC] = useState(""); const [target, setTarget] = useState(""); const [phase, setPhase] = useState("Veg"); const [intensity, setIntensity] = useState("Medium"); const [results, setResults] = useState(null);
+const koolBloomRatios = { "Mid Flower": 0.25, "Late Flower": 0.6, };
 
-const convert = () => { const isPPM = !target.includes(".") && parseInt(target) >= 20; const targetEC = isPPM ? parseInt(target) / 500 : parseFloat(target); const baseEC = startEC ? parseFloat(startEC) : 0; const ecToAdd = Math.max(0, targetEC - baseEC);
+function App() { const [waterType, setWaterType] = useState("Tap"); const [startingEC, setStartingEC] = useState(""); const [targetEC, setTargetEC] = useState(""); const [phase, setPhase] = useState("Veg"); const [intensity, setIntensity] = useState("Medium"); const [results, setResults] = useState(null);
 
-const maxGrams = feedCharts[phase][intensity];
-const gramsPerEC = maxGrams / 3.0;
-const dose = gramsPerEC * ecToAdd;
+const handleConvert = () => { const ecValue = parseFloat(targetEC); if (isNaN(ecValue)) return;
 
-const ppm = Math.round(targetEC * 500);
+const ppm = Math.round(ecValue * 500);
+const defaultGramsPerGal = feedChart[phase][intensity];
 
-let result = {
-  ec: targetEC.toFixed(2),
-  ppm,
-};
+let adjustedGrams = defaultGramsPerGal;
+let koolBloomGrams = 0;
 
-if (phase === "Veg") {
-  result.maxigrow = dose.toFixed(2);
-} else if (phase === "Early Flower") {
-  result.maxibloom = dose.toFixed(2);
-} else if (phase === "Mid Flower") {
-  result.maxibloom = (dose * 0.75).toFixed(2);
-  result.koolbloom = (dose * 0.25).toFixed(2);
-} else if (phase === "Late Flower") {
-  result.maxibloom = (dose * 0.4).toFixed(2);
-  result.koolbloom = (dose * 0.6).toFixed(2);
+if (startingEC !== "") {
+  const ecStart = parseFloat(startingEC);
+  const deltaEC = Math.max(0, ecValue - ecStart);
+  adjustedGrams = parseFloat(
+    (defaultGramsPerGal * (deltaEC / ecValue)).toFixed(2)
+  );
 }
 
-setResults(result);
+if (phase === "Mid Flower" || phase === "Late Flower") {
+  koolBloomGrams = parseFloat(
+    (adjustedGrams * koolBloomRatios[phase]).toFixed(2)
+  );
+  adjustedGrams = parseFloat(
+    (adjustedGrams - koolBloomGrams).toFixed(2)
+  );
+}
+
+setResults({
+  ec: ecValue,
+  ppm,
+  maxiGrams: adjustedGrams,
+  koolBloom: koolBloomGrams,
+});
 
 };
 
-return ( <div style={{ padding: 20, fontFamily: "Arial" }}> <h1>Chronic Worm Farmer Nutrient Calculator</h1>
+return ( <div className="App"> <h1>Chronic Worm Farmer Nutrient Calculator</h1>
 
 <label>
     Water Type (for your own reference):
@@ -41,69 +48,76 @@ return ( <div style={{ padding: 20, fontFamily: "Arial" }}> <h1>Chronic Worm Far
       <option>Tap</option>
       <option>RO</option>
       <option>Distilled</option>
-      <option>Spring</option>
+      <option>Well</option>
     </select>
   </label>
-  <br /><br />
+
+  <br />
 
   <label>
     Starting EC of Water (optional):
     <input
-      type="text"
-      value={startEC}
-      onChange={(e) => setStartEC(e.target.value)}
-      placeholder="e.g., 1.2"
+      type="number"
+      value={startingEC}
+      onChange={(e) => setStartingEC(e.target.value)}
     />
   </label>
-  <br /><br />
+
+  <br />
 
   <label>
     Target EC or PPM:
     <input
       type="text"
-      value={target}
-      onChange={(e) => setTarget(e.target.value)}
-      placeholder="e.g., 3 or 1500"
+      value={targetEC}
+      onChange={(e) => setTargetEC(e.target.value)}
     />
   </label>
-  <br /><br />
+
+  <br />
 
   <label>
     Nutrient Phase:
     <select value={phase} onChange={(e) => setPhase(e.target.value)}>
-      <option>Veg</option>
-      <option>Early Flower</option>
-      <option>Mid Flower</option>
-      <option>Late Flower</option>
+      <option value="Veg">Veg</option>
+      <option value="Early Flower">Early Flower (MaxiBloom only)</option>
+      <option value="Mid Flower">Mid Flower (MaxiBloom + KoolBloom)</option>
+      <option value="Late Flower">Late Flower (MaxiBloom + KoolBloom)</option>
     </select>
   </label>
-  <br /><br />
+
+  <br />
 
   <label>
     Feed Chart Intensity:
-    <select value={intensity} onChange={(e) => setIntensity(e.target.value)}>
+    <select
+      value={intensity}
+      onChange={(e) => setIntensity(e.target.value)}
+    >
       <option>Light</option>
       <option>Medium</option>
       <option>Aggressive</option>
     </select>
   </label>
-  <br /><br />
 
-  <button onClick={convert}>Convert</button>
+  <br />
+
+  <button onClick={handleConvert}>Convert</button>
 
   {results && (
-    <div style={{ marginTop: 20 }}>
+    <div>
       <h2>Results:</h2>
       <p><strong>EC:</strong> {results.ec}</p>
       <p><strong>PPM (500 scale):</strong> {results.ppm}</p>
-      {results.maxigrow && <p><strong>MaxiGrow:</strong> {results.maxigrow} g/gal</p>}
-      {results.maxibloom && <p><strong>MaxiBloom:</strong> {results.maxibloom} g/gal</p>}
-      {results.koolbloom && <p><strong>KoolBloom:</strong> {results.koolbloom} g/gal</p>}
+      <p><strong>MaxiGrow/MaxiBloom:</strong> {results.maxiGrams} g/gal</p>
+      {results.koolBloom > 0 && (
+        <p><strong>KoolBloom:</strong> {results.koolBloom} g/gal</p>
+      )}
     </div>
   )}
 </div>
 
 ); }
 
-ReactDOM.render(<App />, document.getElementById("root"));
+const container = document.getElementById("root"); const root = createRoot(container); root.render(<App />);
 
