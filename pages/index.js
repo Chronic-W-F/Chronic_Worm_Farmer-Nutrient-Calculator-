@@ -1,122 +1,40 @@
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
 
-function App() {
-  const [waterType, setWaterType] = useState('Tap');
-  const [startingEC, setStartingEC] = useState('');
-  const [targetECInput, setTargetECInput] = useState('');
-  const [nutrientPhase, setNutrientPhase] = useState('Veg');
-  const [feedIntensity, setFeedIntensity] = useState('Medium');
-  const [results, setResults] = useState(null);
+export default function Home() { const [waterType, setWaterType] = useState('Tap'); const [baseEC, setBaseEC] = useState(''); const [target, setTarget] = useState(''); const [phase, setPhase] = useState('Veg'); const [intensity, setIntensity] = useState('Light'); const [results, setResults] = useState(null);
 
-  const ppmToEc = ppm => ppm / 500;
-  const ecToPpm = ec => ec * 500;
+const ecMultipliers = { Veg: { Light: 1.43, Medium: 1.83, Aggressive: 2.59 }, 'Early Flower': { Light: 1.43, Medium: 1.83, Aggressive: 2.59 }, 'Mid Flower': { Light: 1.43, Medium: 1.83, Aggressive: 2.59 }, 'Late Flower': { Light: 1.43, Medium: 1.83, Aggressive: 2.59 }, };
 
-  const feedChart = {
-    Veg: { Light: 3.0, Medium: 4.0, Aggressive: 6.5 },
-    'Early Flower': { Light: 2.5, Medium: 3.5, Aggressive: 5.5 },
-    'Mid Flower': { Light: 2.5, Medium: 3.5, Aggressive: 5.5 },
-    'Late Flower': { Light: 2.0, Medium: 3.0, Aggressive: 4.5 },
-  };
+const koolbloomRatios = { 'Mid Flower': 0.25, 'Late Flower': 0.60, };
 
-  const koolBloomMultiplier = {
-    'Mid Flower': 0.25,
-    'Late Flower': 0.6,
-  };
+const handleConvert = () => { const base = parseFloat(baseEC); const targetEC = parseFloat(target); const useBase = isNaN(base) ? 0 : base; const ecGap = targetEC - useBase;
 
-  const convert = () => {
-    let targetEC = targetECInput.includes('.') ? parseFloat(targetECInput) : ppmToEc(parseInt(targetECInput));
-    if (isNaN(targetEC)) return;
-
-    let baseEC = startingEC ? parseFloat(startingEC) : 0;
-    if (isNaN(baseEC)) baseEC = 0;
-
-    const deltaEC = targetEC - baseEC;
-    const chartEC = feedChart[nutrientPhase]?.[feedIntensity] || 1;
-
-    const gramsPerEC = chartEC / 3; // We assume chartEC gives ~3.0 EC at full strength
-    let maxibloomGrams = deltaEC * gramsPerEC;
-
-    let koolbloomGrams = 0;
-    if (nutrientPhase === 'Mid Flower' || nutrientPhase === 'Late Flower') {
-      koolbloomGrams = maxibloomGrams * koolBloomMultiplier[nutrientPhase];
-      maxibloomGrams -= koolbloomGrams;
-    }
-
-    setResults({
-      ec: targetEC.toFixed(2),
-      ppm: ecToPpm(targetEC),
-      maxibloom: maxibloomGrams.toFixed(2),
-      koolbloom: koolbloomGrams > 0 ? koolbloomGrams.toFixed(2) : null,
-    });
-  };
-
-  return (
-    <div style={{ padding: 20, fontFamily: 'Arial, sans-serif' }}>
-      <h1>Chronic Worm Farmer Nutrient Calculator</h1>
-
-      <div>
-        <label>
-          Water Type (for your own reference):
-          <select value={waterType} onChange={e => setWaterType(e.target.value)}>
-            <option value="Tap">Tap</option>
-            <option value="RO">RO</option>
-            <option value="Well">Well</option>
-            <option value="Rain">Rain</option>
-          </select>
-        </label>
-      </div>
-
-      <div>
-        <label>
-          Starting EC of Water (optional):
-          <input value={startingEC} onChange={e => setStartingEC(e.target.value)} />
-        </label>
-      </div>
-
-      <div>
-        <label>
-          Target EC or PPM:
-          <input value={targetECInput} onChange={e => setTargetECInput(e.target.value)} />
-        </label>
-      </div>
-
-      <div>
-        <label>
-          Nutrient Phase:
-          <select value={nutrientPhase} onChange={e => setNutrientPhase(e.target.value)}>
-            <option value="Veg">Veg (MaxiGrow only)</option>
-            <option value="Early Flower">Early Flower (MaxiBloom only)</option>
-            <option value="Mid Flower">Mid Flower (MaxiBloom + KoolBloom)</option>
-            <option value="Late Flower">Late Flower (MaxiBloom + KoolBloom)</option>
-          </select>
-        </label>
-      </div>
-
-      <div>
-        <label>
-          Feed Chart Intensity:
-          <select value={feedIntensity} onChange={e => setFeedIntensity(e.target.value)}>
-            <option value="Light">Light</option>
-            <option value="Medium">Medium</option>
-            <option value="Aggressive">Aggressive</option>
-          </select>
-        </label>
-      </div>
-
-      <button onClick={convert}>Convert</button>
-
-      {results && (
-        <div style={{ marginTop: 20 }}>
-          <h3>Results:</h3>
-          <p><strong>EC:</strong> {results.ec}</p>
-          <p><strong>PPM (500 scale):</strong> {results.ppm}</p>
-          <p><strong>{nutrientPhase.includes('Veg') ? 'MaxiGrow' : 'MaxiBloom'}:</strong> {results.maxibloom} g/gal</p>
-          {results.koolbloom && <p><strong>KoolBloom:</strong> {results.koolbloom} g/gal</p>}
-        </div>
-      )}
-    </div>
-  );
+if (isNaN(targetEC) || ecGap <= 0) {
+  setResults({
+    ec: isNaN(targetEC) ? '' : targetEC.toFixed(2),
+    ppm: isNaN(targetEC) ? '' : Math.round(targetEC * 500),
+    result: 'Enter valid target EC higher than base EC.',
+  });
+  return;
 }
 
-export default App;
+const multiplier = ecMultipliers[phase][intensity];
+let koolbloom = 0;
+let mainGrams = parseFloat((ecGap * multiplier).toFixed(2));
+
+if (phase === 'Mid Flower' || phase === 'Late Flower') {
+  const kbRatio = koolbloomRatios[phase];
+  koolbloom = parseFloat((mainGrams * kbRatio).toFixed(2));
+  mainGrams = parseFloat((mainGrams * (1 - kbRatio)).toFixed(2));
+}
+
+setResults({
+  ec: targetEC.toFixed(2),
+  ppm: Math.round(targetEC * 500),
+  main: mainGrams,
+  koolbloom,
+});
+
+};
+
+return ( <div style={{ fontFamily: 'Arial', padding: '20px' }}> <h1>Chronic Worm Farmer Nutrient Calculator</h1> <label> Water Type (for your own reference): <select value={waterType} onChange={e => setWaterType(e.target.value)}> <option value="Tap">Tap</option> <option value="RO">RO</option> <option value="Distilled">Distilled</option> <option value="Spring">Spring</option> </select> </label> <br /><br /> <label> Starting EC of Water (optional): <input type="text" value={baseEC} onChange={e => setBaseEC(e.target.value)} /> </label> <br /><br /> <label> Target EC or PPM: <input type="text" value={target} onChange={e => setTarget(e.target.value)} /> </label> <br /><br /> <label> Nutrient Phase: <select value={phase} onChange={e => setPhase(e.target.value)}> <option value="Veg">Veg (MaxiGrow only)</option> <option value="Early Flower">Early Flower (MaxiBloom only)</option> <option value="Mid Flower">Mid Flower (MaxiBloom + KoolBloom)</option> <option value="Late Flower">Late Flower (MaxiBloom + KoolBloom)</option> </select> </label> <br /><br /> <label> Feed Chart Intensity: <select value={intensity} onChange={e => setIntensity(e.target.value)}> <option value="Light">Light</option> <option value="Medium">Medium</option> <option value="Aggressive">Aggressive</option> </select> </label> <br /><br /> <button onClick={handleConvert}>Convert</button> <br /><br /> {results && ( <div> <h2>Results:</h2> <p><strong>EC:</strong> {results.ec}</p> <p><strong>PPM (500 scale):</strong> {results.ppm}</p> {results.main && ( <p><strong>{phase.includes('Veg') ? 'MaxiGrow' : 'MaxiBloom'}:</strong> {results.main} g/gal</p> )} {results.koolbloom > 0 && ( <p><strong>KoolBloom:</strong> {results.koolbloom} g/gal</p> )} {results.result && <p>{results.result}</p>} </div> )} </div> ); }
+
