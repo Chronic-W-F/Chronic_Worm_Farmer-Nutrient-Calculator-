@@ -1,4 +1,4 @@
-// Chronic Worm Farmer Nutrient Calculator — Final Fixes for EC + Phase Highlight
+// Chronic Worm Farmer Nutrient Calculator — Phase Highlight Glow
 
 import React, { useState } from "react"; import { Input } from "@/components/ui/input"; import { Label } from "@/components/ui/label"; import { Card, CardContent } from "@/components/ui/card";
 
@@ -90,8 +90,10 @@ return ( <div className="p-6 max-w-xl mx-auto text-gray-900"> <h1 className="tex
       <button
         key={p}
         onClick={() => handlePhaseSelect(p)}
-        className={`px-3 py-1 text-sm rounded-md border ${
-          phase === p ? `${phaseColors[p]} text-white font-bold` : "bg-gray-200 text-black hover:bg-gray-300"
+        className={`px-3 py-1 text-sm rounded-md border transition-all duration-200 ${
+          phase === p
+            ? `${phaseColors[p]} text-white font-bold ring-2 ring-offset-1 ring-green-300 scale-105`
+            : "bg-gray-200 text-black hover:bg-gray-300"
         }`}
       >
         {p.charAt(0).toUpperCase() + p.slice(1)}
