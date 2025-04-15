@@ -50,6 +50,16 @@ export default function App() {
     },
   };
 
+  const handlePhaseSelect = (p) => {
+    setPhase(p);
+    if (p === "flush") {
+      setFlushQuote(flushQuotes[Math.floor(Math.random() * flushQuotes.length)]);
+      setNutrients(null);
+    } else {
+      setFlushQuote(null);
+    }
+  };
+
   const calculateNutrients = () => {
     const start = parseFloat(startingEC);
     const target = parseFloat(targetEC);
@@ -142,9 +152,9 @@ export default function App() {
         {["veg", "early", "mid", "late", "flush"].map((p) => (
           <button
             key={p}
-            onClick={() => setPhase(p)}
-            className={`px-3 py-1 text-sm rounded-md border text-white ${
-              phase === p ? `${phaseColors[p]}` : "bg-gray-300 text-gray-800 hover:bg-gray-400"
+            onClick={() => handlePhaseSelect(p)}
+            className={`px-3 py-1 text-sm rounded-md border ${
+              phase === p ? `${phaseColors[p]} text-white font-bold` : "bg-gray-200 text-black hover:bg-gray-300"
             }`}
           >
             {p.charAt(0).toUpperCase() + p.slice(1)}
@@ -164,7 +174,7 @@ export default function App() {
           {flushQuote ? (
             <>
               <p className="text-xl italic">“{flushQuote}”</p>
-              <p className="text-3xl">{"\u{1F60C}"}</p> {/* stoned emoji */}
+              <span className="text-4xl">🌿<span className="text-red-400">😵‍💫</span></span>
             </>
           ) : !nutrients ? (
             <p className="text-gray-500">Enter ECs and press calculate</p>
