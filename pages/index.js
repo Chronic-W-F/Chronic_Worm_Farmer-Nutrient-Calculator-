@@ -1,4 +1,4 @@
-// Chronic Worm Farmer Nutrient Calculator — Phase Button & EC Field Fix
+// Chronic Worm Farmer Nutrient Calculator — Final Fixes for EC + Phase Highlight
 
 import React, { useState } from "react"; import { Input } from "@/components/ui/input"; import { Label } from "@/components/ui/label"; import { Card, CardContent } from "@/components/ui/card";
 
@@ -10,7 +10,7 @@ const ratios = { maxi: { MaxiGrow: 1.8, MaxiBloom: 1.5, KoolBloom: 1.0, }, gh3: 
 
 const handlePhaseSelect = (p) => { setPhase(p); if (p === "flush") { setFlushQuote(flushQuotes[Math.floor(Math.random() * flushQuotes.length)]); setNutrients(null); } else { setFlushQuote(null); } };
 
-const calculateNutrients = () => { const start = parseFloat(startingEC); const target = parseFloat(targetEC); if ((isNaN(start) || isNaN(target) || target <= start) && phase !== "flush") { setNutrients(null); return; }
+const calculateNutrients = () => { const start = startingEC.trim() === "" ? 0 : parseFloat(startingEC); const target = parseFloat(targetEC); if (isNaN(target) || target <= start) { setNutrients(null); return; }
 
 const adjustedEC = Math.max(0, target - start);
 const result = {};
@@ -64,7 +64,7 @@ return ( <div className="p-6 max-w-xl mx-auto text-gray-900"> <h1 className="tex
 
 <div className="mb-4">
     <Label>Starting EC</Label>
-    <Input type="number" step="0.1" placeholder="e.g. 1.2" value={startingEC} onChange={(e) => setStartingEC(e.target.value)} />
+    <Input type="number" step="0.1" placeholder="optional" value={startingEC} onChange={(e) => setStartingEC(e.target.value)} />
   </div>
 
   <div className="mb-4">
@@ -85,7 +85,7 @@ return ( <div className="p-6 max-w-xl mx-auto text-gray-900"> <h1 className="tex
     </select>
   </div>
 
-  <div className="mb-4 space-x-2">
+  <div className="mb-4 space-x-2 flex flex-wrap gap-2">
     {["veg", "early", "mid", "late", "flush"].map((p) => (
       <button
         key={p}
