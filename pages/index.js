@@ -6,18 +6,18 @@ import { Card, CardContent } from "@/components/ui/card";
 export default function App() {
   const [startingEC, setStartingEC] = useState(1.2);
   const [targetEC, setTargetEC] = useState(2.7);
+  const [gallons, setGallons] = useState(1);
   const [phase, setPhase] = useState("veg");
 
-  // Real conversion ratios: grams per EC per gallon
   const ratios = {
-    MaxiGrow: 1.8,    // ~1.8g = 1.0 EC
-    MaxiBloom: 1.5,   // ~1.5g = 1.0 EC
-    KoolBloom: 1.0    // ~1.0g = 1.0 EC
+    MaxiGrow: 1.8,
+    MaxiBloom: 1.5,
+    KoolBloom: 1.0
   };
 
   const adjustedEC = Math.max(0, targetEC - startingEC);
 
-  const ecToGrams = (ec, strength) => +(ec * strength).toFixed(2);
+  const ecToGrams = (ec, strength) => +(ec * strength * gallons).toFixed(2);
 
   const getNutrients = () => {
     switch (phase) {
@@ -72,6 +72,11 @@ export default function App() {
         <Input type="number" step="0.1" value={targetEC} onChange={(e) => setTargetEC(parseFloat(e.target.value))} />
       </div>
 
+      <div className="mb-4">
+        <Label>Total Water (Gallons)</Label>
+        <Input type="number" step="1" min="1" max="100" value={gallons} onChange={(e) => setGallons(Math.min(100, Math.max(1, parseInt(e.target.value))))} />
+      </div>
+
       <div className="mb-4 space-x-2">
         <button onClick={() => setPhase("veg")} className="px-3 py-1 text-sm rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200">
           Veg
@@ -96,13 +101,13 @@ export default function App() {
             <p className="text-center">No nutrients – Flush phase</p>
           ) : (
             <>
-              {nutrients.MaxiGrow > 0 && <p>MaxiGrow: {nutrients.MaxiGrow}g per gallon</p>}
-              {nutrients.MaxiBloom > 0 && <p>MaxiBloom: {nutrients.MaxiBloom}g per gallon</p>}
-              {nutrients.KoolBloom > 0 && <p>KoolBloom: {nutrients.KoolBloom}g per gallon</p>}
+              {nutrients.MaxiGrow > 0 && <p>MaxiGrow: {nutrients.MaxiGrow}g total for {gallons} gal</p>}
+              {nutrients.MaxiBloom > 0 && <p>MaxiBloom: {nutrients.MaxiBloom}g total for {gallons} gal</p>}
+              {nutrients.KoolBloom > 0 && <p>KoolBloom: {nutrients.KoolBloom}g total for {gallons} gal</p>}
             </>
           )}
         </CardContent>
       </Card>
     </div>
   );
-              }
+}
