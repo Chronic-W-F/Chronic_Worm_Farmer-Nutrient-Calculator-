@@ -1,86 +1,94 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 
-export default function Home() { const [waterType, setWaterType] = useState('Tap'); const [baseEC, setBaseEC] = useState(''); const [targetEC, setTargetEC] = useState(''); const [phase, setPhase] = useState('Veg'); const [intensity, setIntensity] = useState('Light'); const [results, setResults] = useState(null);
+export default function App() {
+  const [startingEC, setStartingEC] = useState(1.2);
+  const [targetEC, setTargetEC] = useState(2.7);
+  const [phase, setPhase] = useState("veg");
 
-const ecMultipliers = { Veg: { Light: 1.43, Medium: 1.83, Aggressive: 2.6 }, 'Early Flower': { Light: 1.95, Medium: 2.45, Aggressive: 3.3 }, 'Mid Flower': { Light: 2.0, Medium: 2.5, Aggressive: 3.4 }, 'Late Flower': { Light: 1.95, Medium: 2.45, Aggressive: 3.3 }, };
+  const ecToGrams = (ec, ratio) => +(ec * ratio).toFixed(2);
 
-const koolbloomRatios = { 'Mid Flower': 0.25, 'Late Flower': 0.6, };
+  const adjustedEC = targetEC - startingEC;
 
-const handleConvert = () => { const base = parseFloat(baseEC); const target = parseFloat(targetEC); const ecGap = isNaN(base) ? target : target - base;
+  const getNutrients = () => {
+    switch (phase) {
+      case "veg":
+        return {
+          MaxiGrow: ecToGrams(adjustedEC, 1),
+          MaxiBloom: 0,
+          KoolBloom: 0,
+        };
+      case "early":
+        return {
+          MaxiGrow: 0,
+          MaxiBloom: ecToGrams(adjustedEC, 1),
+          KoolBloom: 0,
+        };
+      case "mid":
+        return {
+          MaxiGrow: 0,
+          MaxiBloom: ecToGrams(adjustedEC, 0.75),
+          KoolBloom: ecToGrams(adjustedEC, 0.25),
+        };
+      case "late":
+        return {
+          MaxiGrow: 0,
+          MaxiBloom: ecToGrams(adjustedEC, 0.4),
+          KoolBloom: ecToGrams(adjustedEC, 0.6),
+        };
+      case "flush":
+        return {
+          MaxiGrow: 0,
+          MaxiBloom: 0,
+          KoolBloom: 0,
+        };
+      default:
+        return {};
+    }
+  };
 
-if (isNaN(target) || ecGap <= 0) {
-  setResults({
-    ec: isNaN(target) ? 0 : target.toFixed(2),
-    ppm: isNaN(target) ? 0 : (target * 500).toFixed(0),
-    nutrients: {},
-  });
-  return;
+  const nutrients = getNutrients();
+
+  return (
+    <div className="p-6 max-w-xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Chronic Worm Farmer Nutrient Calculator</h1>
+
+      <div className="mb-4">
+        <Label>Starting EC (e.g. tap = 1.2)</Label>
+        <Input type="number" step="0.1" value={startingEC} onChange={(e) => setStartingEC(parseFloat(e.target.value))} />
+      </div>
+
+      <div className="mb-4">
+        <Label>Target EC</Label>
+        <Input type="number" step="0.1" value={targetEC} onChange={(e) => setTargetEC(parseFloat(e.target.value))} />
+      </div>
+
+      <Tabs defaultValue="veg" value={phase} onValueChange={setPhase} className="mb-4">
+        <TabsList>
+          <TabsTrigger value="veg">Veg</TabsTrigger>
+          <TabsTrigger value="early">Early Flower</TabsTrigger>
+          <TabsTrigger value="mid">Mid Flower</TabsTrigger>
+          <TabsTrigger value="late">Late Flower</TabsTrigger>
+          <TabsTrigger value="flush">Flush</TabsTrigger>
+        </TabsList>
+      </Tabs>
+
+      <Card>
+        <CardContent className="p-4 space-y-2">
+          {phase === "flush" ? (
+            <p className="text-center">No nutrients – Flush phase</p>
+          ) : (
+            <>
+              {nutrients.MaxiGrow > 0 && <p>MaxiGrow: {nutrients.MaxiGrow}g per gallon</p>}
+              {nutrients.MaxiBloom > 0 && <p>MaxiBloom: {nutrients.MaxiBloom}g per gallon</p>}
+              {nutrients.KoolBloom > 0 && <p>KoolBloom: {nutrients.KoolBloom}g per gallon</p>}
+            </>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
-
-const multiplier = ecMultipliers[phase][intensity];
-const totalGrams = ecGap * multiplier;
-const nutrients = {};
-
-if (phase === 'Veg') {
-  nutrients.MaxiGrow = totalGrams.toFixed(2);
-} else {
-  const koolbloomRatio = koolbloomRatios[phase] || 0;
-  const koolbloomGrams = totalGrams * koolbloomRatio;
-  const maxibloomGrams = totalGrams - koolbloomGrams;
-  nutrients.MaxiBloom = maxibloomGrams.toFixed(2);
-  if (koolbloomGrams > 0) {
-    nutrients.KoolBloom = koolbloomGrams.toFixed(2);
-  }
-}
-
-setResults({
-  ec: target.toFixed(2),
-  ppm: (target * 500).toFixed(0),
-  nutrients,
-});
-
-};
-
-return ( <div style={{ padding: '20px', fontFamily: 'Arial' }}> <h1>Chronic Worm Farmer Nutrient Calculator</h1>
-
-<label>
-    Water Type (for your own reference):
-    <select value={waterType} onChange={(e) => setWaterType(e.target.value)}>
-      <option value="Tap">Tap</option>
-      <option value="RO">RO</option>
-      <option value="Rain">Rain</option>
-      <option value="Well">Well</option>
-    </select>
-  </label>
-  <br /><br />
-
-  <label>
-    Starting EC of Water (optional):
-    <input type="number" step="0.01" value={baseEC} onChange={(e) => setBaseEC(e.target.value)} />
-  </label>
-  <br /><br />
-
-  <label>
-    Target EC or PPM:
-    <input type="number" step="0.01" value={targetEC} onChange={(e) => setTargetEC(e.target.value)} />
-  </label>
-  <br /><br />
-
-  <label>
-    Nutrient Phase:
-    <select value={phase} onChange={(e) => setPhase(e.target.value)}>
-      <option value="Veg">Veg (MaxiGrow only)</option>
-      <option value="Early Flower">Early Flower (MaxiBloom only)</option>
-      <option value="Mid Flower">Mid Flower (MaxiBloom + KoolBloom)</option>
-      <option value="Late Flower">Late Flower (MaxiBloom + KoolBloom)</option>
-    </select>
-  </label>
-  <br /><br />
-
-  <label>
-    Feed Chart Intensity:
-    <select value={intensity} onChange={(e) => setIntensity(e.target.value)}>
-      <option value="Light">Light</option>
-      <option value="Medium">Medium</option>
-      <option value="Aggressive">Aggressive</
-
