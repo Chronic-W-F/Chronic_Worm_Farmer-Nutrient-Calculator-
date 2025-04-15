@@ -63,7 +63,7 @@ export default function App() {
   const calculateNutrients = () => {
     const start = parseFloat(startingEC);
     const target = parseFloat(targetEC);
-    if (isNaN(start) || isNaN(target) || target <= start) {
+    if ((isNaN(start) || isNaN(target) || target <= start) && phase !== "flush") {
       setNutrients(null);
       return;
     }
