@@ -1,4 +1,4 @@
-// pages/index.js import { useState } from "react";
+import { useState } from "react";
 
 const phases = ["Veg", "Early", "Mid", "Late", "Flush"]; const systems = [ "GH Maxi Series (Powder)", "GH 3-Part + KoolBloom (Liquid)", ];
 
