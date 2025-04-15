@@ -4,15 +4,13 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 
 export default function App() {
-  const [startingEC, setStartingEC] = useState(1.2);
-  const [targetEC, setTargetEC] = useState(2.7);
+  const [startingEC, setStartingEC] = useState("");
+  const [targetEC, setTargetEC] = useState("");
   const [gallons, setGallons] = useState(1);
   const [phase, setPhase] = useState("veg");
-  const [system, setSystem] = useState("maxi"); // "maxi" or "gh3"
+  const [system, setSystem] = useState("maxi");
+  const [nutrients, setNutrients] = useState(null);
 
-  const adjustedEC = Math.max(0, targetEC - startingEC);
-
-  // Base multipliers (grams or mL per EC per gallon)
   const ratios = {
     maxi: {
       MaxiGrow: 1.8,
@@ -20,98 +18,71 @@ export default function App() {
       KoolBloom: 1.0,
     },
     gh3: {
-      Micro: 5,
-      Gro: 10,
-      Bloom: 5,
-      KoolBloom: 0,
+      veg: { Micro: 5, Gro: 10, Bloom: 5, KoolBloom: 0 },
+      early: { Micro: 5, Gro: 5, Bloom: 10, KoolBloom: 0 },
+      mid: { Micro: 5, Gro: 2.5, Bloom: 12.5, KoolBloom: 2.5 },
+      late: { Micro: 5, Gro: 0, Bloom: 15, KoolBloom: 5 },
+      flush: { Micro: 0, Gro: 0, Bloom: 0, KoolBloom: 0 },
     },
   };
 
-  const ecToGrams = (ec, strength) => +(ec * strength * gallons).toFixed(2);
-  const mL = (value) => +(value * gallons).toFixed(1);
+  const calculateNutrients = () => {
+    const start = parseFloat(startingEC);
+    const target = parseFloat(targetEC);
+    if (isNaN(start) || isNaN(target) || target <= start) {
+      setNutrients(null);
+      return;
+    }
 
-  const getNutrients = () => {
+    const adjustedEC = Math.max(0, target - start);
+    const result = {};
+
     if (system === "maxi") {
       switch (phase) {
         case "veg":
-          return {
-            MaxiGrow: ecToGrams(adjustedEC, ratios.maxi.MaxiGrow),
-            MaxiBloom: 0,
-            KoolBloom: 0,
-          };
+          result.MaxiGrow = +(adjustedEC * ratios.maxi.MaxiGrow * gallons).toFixed(2);
+          break;
         case "early":
-          return {
-            MaxiGrow: 0,
-            MaxiBloom: ecToGrams(adjustedEC, ratios.maxi.MaxiBloom),
-            KoolBloom: 0,
-          };
+          result.MaxiBloom = +(adjustedEC * ratios.maxi.MaxiBloom * gallons).toFixed(2);
+          break;
         case "mid":
-          return {
-            MaxiGrow: 0,
-            MaxiBloom: ecToGrams(adjustedEC * 0.75, ratios.maxi.MaxiBloom),
-            KoolBloom: ecToGrams(adjustedEC * 0.25, ratios.maxi.KoolBloom),
-          };
+          result.MaxiBloom = +(adjustedEC * 0.75 * ratios.maxi.MaxiBloom * gallons).toFixed(2);
+          result.KoolBloom = +(adjustedEC * 0.25 * ratios.maxi.KoolBloom * gallons).toFixed(2);
+          break;
         case "late":
-          return {
-            MaxiGrow: 0,
-            MaxiBloom: ecToGrams(adjustedEC * 0.4, ratios.maxi.MaxiBloom),
-            KoolBloom: ecToGrams(adjustedEC * 0.6, ratios.maxi.KoolBloom),
-          };
+          result.MaxiBloom = +(adjustedEC * 0.4 * ratios.maxi.MaxiBloom * gallons).toFixed(2);
+          result.KoolBloom = +(adjustedEC * 0.6 * ratios.maxi.KoolBloom * gallons).toFixed(2);
+          break;
         default:
-          return {};
+          break;
       }
     } else if (system === "gh3") {
-      // GH 3-Part Medium Feed + KoolBloom
-      switch (phase) {
-        case "veg":
-          return {
-            Micro: mL(5),
-            Gro: mL(10),
-            Bloom: mL(5),
-            KoolBloom: 0,
-          };
-        case "early":
-          return {
-            Micro: mL(5),
-            Gro: mL(5),
-            Bloom: mL(10),
-            KoolBloom: 0,
-          };
-        case "mid":
-          return {
-            Micro: mL(5),
-            Gro: mL(2.5),
-            Bloom: mL(12.5),
-            KoolBloom: mL(2.5),
-          };
-        case "late":
-          return {
-            Micro: mL(5),
-            Gro: 0,
-            Bloom: mL(15),
-            KoolBloom: mL(5),
-          };
-        default:
-          return {};
+      const baseTotalEC = 1.5; // Base GH medium schedule assumes 1.5 EC
+      const scale = adjustedEC / baseTotalEC;
+      const base = ratios.gh3[phase] || {};
+      for (const key in base) {
+        const scaled = base[key] * scale * gallons;
+        if (scaled > 0) {
+          result[key] = +scaled.toFixed(1);
+        }
       }
     }
-    return {};
-  };
 
-  const nutrients = getNutrients();
+    setNutrients(result);
+  };
 
   return (
     <div className="p-6 max-w-xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">Chronic Worm Farmer Nutrient Calculator</h1>
 
       <div className="mb-4">
-        <Label>Starting EC (e.g. tap = 1.2)</Label>
-        <Input type="number" step="0.1" value={startingEC} onChange={(e) => setStartingEC(parseFloat(e.target.value))} />
+        <Label>Starting EC</Label>
+        <Input type="number" step="0.1" placeholder="e.g. 1.2" value={startingEC} onChange={(e) => setStartingEC(e.target.value)} />
       </div>
 
       <div className="mb-4">
         <Label>Target EC</Label>
-        <Input type="number" step="0.1" value={targetEC} onChange={(e) => setTargetEC(parseFloat(e.target.value))} />
+        <Input type="number" step="0.1" placeholder="e.g. 2.7" value={targetEC} onChange={(e) => setTargetEC(e.target.value)} />
       </div>
 
       <div className="mb-4">
@@ -135,20 +106,16 @@ export default function App() {
         <button onClick={() => setPhase("flush")} className="px-3 py-1 text-sm rounded-md border border-gray-300 bg-gray-100 hover:bg-gray-200">Flush</button>
       </div>
 
+      <button onClick={calculateNutrients} className="mb-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">Calculate</button>
+
       <Card>
         <CardContent className="p-4 space-y-2">
-          {phase === "flush" ? (
-            <p className="text-center">No nutrients – Flush phase</p>
+          {!nutrients ? (
+            <p className="text-center text-gray-500">Enter ECs and press calculate</p>
           ) : (
-            <>
-              {Object.entries(nutrients).map(([key, value]) =>
-                value > 0 ? (
-                  <p key={key}>
-                    {key}: {value}{system === "maxi" ? "g" : "mL"} total for {gallons} gal
-                  </p>
-                ) : null
-              )}
-            </>
+            Object.entries(nutrients).map(([key, value]) => (
+              <p key={key}>{key}: {value}{system === "maxi" ? "g" : "mL"} total for {gallons} gal</p>
+            ))
           )}
         </CardContent>
       </Card>
