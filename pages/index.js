@@ -149,21 +149,20 @@ export default function Home() {
       </select>
 
       <div className="flex flex-wrap gap-2 mb-4">
-        {phases.map((p) => (
-          <button
-            key={p}
-            onClick={() => setSelectedPhase(p)}
-            className={`px-4 py-2 rounded-md border font-semibold transition duration-200
-              ${
-                selectedPhase === p
-                  ? "bg-green-500 text-white border-green-700"
-                  : "bg-white text-gray-800 border-gray-300 hover:bg-gray-100"
-              }`}
-          >
-            {p}
-          </button>
-        ))}
-      </div>
+  {phases.map((p) => (
+    <button
+      key={p}
+      onClick={() => setSelectedPhase(p)}
+      className={`px-4 py-2 rounded-md border font-semibold transition duration-200 ${
+        selectedPhase === p
+          ? "selected-phase"
+          : "unselected-phase"
+      }`}
+    >
+      {p}
+    </button>
+  ))}
+</div>
 
       <button
         onClick={handleCalculate}
