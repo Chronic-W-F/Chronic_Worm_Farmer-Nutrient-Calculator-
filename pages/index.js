@@ -35,12 +35,13 @@ export default function Home() {
     "Bye bye ppm.",
     "Let the fade games begin.",
     "Just water things.",
-    "Water in. Wisdom out."
+    "Water in. Wisdom out.",
   ];
 
   const handleCalculate = () => {
     if (selectedPhase === "Flush") {
-      const pick = flushPhrases[Math.floor(Math.random() * flushPhrases.length)];
+      const pick =
+        flushPhrases[Math.floor(Math.random() * flushPhrases.length)];
       setResult("");
       setFlushPhrase(pick);
       return;
@@ -49,7 +50,6 @@ export default function Home() {
     const ecStart = parseFloat(startingEC) || 0;
     const ecTarget = parseFloat(targetEC) || 0;
     const gallons = parseFloat(water) || 1;
-    const delta = ecTarget - ecStart;
 
     let output = "";
 
@@ -64,7 +64,9 @@ export default function Home() {
           : selectedPhase === "Late"
           ? 3.0
           : 0;
-      output = `MaxiGrow: ${(gramsPerGal * gallons).toFixed(2)}g total for ${gallons} gal`;
+      output = `MaxiGrow: ${(gramsPerGal * gallons).toFixed(
+        2
+      )}g total for ${gallons} gal`;
     } else {
       let micro = 0,
         gro = 0,
@@ -91,10 +93,19 @@ export default function Home() {
         kool = 5;
       }
 
-      output = `Micro: ${(micro * gallons).toFixed(1)}mL total for ${gallons} gal\n`;
-      output += `Gro: ${(gro * gallons).toFixed(1)}mL total for ${gallons} gal\n`;
-      output += `Bloom: ${(bloom * gallons).toFixed(1)}mL total for ${gallons} gal`;
-      if (kool) output += `\nKoolBloom: ${(kool * gallons).toFixed(1)}mL total for ${gallons} gal`;
+      output = `Micro: ${(micro * gallons).toFixed(
+        1
+      )}mL total for ${gallons} gal\n`;
+      output += `Gro: ${(gro * gallons).toFixed(
+        1
+      )}mL total for ${gallons} gal\n`;
+      output += `Bloom: ${(bloom * gallons).toFixed(
+        1
+      )}mL total for ${gallons} gal`;
+      if (kool)
+        output += `\nKoolBloom: ${(kool * gallons).toFixed(
+          1
+        )}mL total for ${gallons} gal`;
     }
 
     setFlushPhrase("");
@@ -103,70 +114,80 @@ export default function Home() {
 
   return (
     <div className="p-6 max-w-xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">Chronic Worm Farmer Nutrient Calculator</h1>
+      <h1 className="text-3xl font-bold mb-6 text-center">
+        Chronic Worm Farmer Nutrient Calculator
+      </h1>
 
-      <label className="block mb-2 font-semibold">
-        Starting EC <span className="text-gray-500 text-sm">(optional)</span>
-      </label>
-      <input
-        type="number"
-        value={startingEC}
-        onChange={(e) => setStartingEC(e.target.value)}
-        className="border p-2 w-full mb-4"
-        placeholder="e.g. 1.2"
-      />
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">
+          Starting EC <span className="text-gray-500 text-sm">(optional)</span>
+        </label>
+        <input
+          type="number"
+          value={startingEC}
+          onChange={(e) => setStartingEC(e.target.value)}
+          className="w-full border p-2 rounded"
+          placeholder="e.g. 1.2"
+        />
+      </div>
 
-      <label className="block mb-2 font-semibold">Target EC</label>
-      <input
-        type="number"
-        value={targetEC}
-        onChange={(e) => setTargetEC(e.target.value)}
-        className="border p-2 w-full mb-4"
-        placeholder="e.g. 2.5"
-      />
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Target EC</label>
+        <input
+          type="number"
+          value={targetEC}
+          onChange={(e) => setTargetEC(e.target.value)}
+          className="w-full border p-2 rounded"
+          placeholder="e.g. 2.5"
+        />
+      </div>
 
-      <label className="block mb-2 font-semibold">Total Water (Gallons)</label>
-      <input
-        type="number"
-        value={water}
-        onChange={(e) => setWater(e.target.value)}
-        className="border p-2 w-full mb-4"
-        min={1}
-        max={100}
-      />
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Total Water (Gallons)</label>
+        <input
+          type="number"
+          value={water}
+          onChange={(e) => setWater(e.target.value)}
+          className="w-full border p-2 rounded"
+          min={1}
+          max={100}
+        />
+      </div>
 
-      <label className="block mb-2 font-semibold">Nutrient System</label>
-      <select
-        value={system}
-        onChange={(e) => setSystem(e.target.value)}
-        className="border p-2 w-full mb-4"
-      >
-        {systems.map((s) => (
-          <option key={s} value={s}>
-            {s}
-          </option>
-        ))}
-      </select>
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Nutrient System</label>
+        <select
+          value={system}
+          onChange={(e) => setSystem(e.target.value)}
+          className="w-full border p-2 rounded"
+        >
+          {systems.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+      </div>
 
       <div className="flex flex-wrap gap-2 mb-4">
-  {phases.map((p) => (
-    <button
-      key={p}
-      onClick={() => setSelectedPhase(p)}
-      className={`px-4 py-2 rounded-md border font-semibold transition duration-200 ${
-        selectedPhase === p
-          ? "selected-phase"
-          : "unselected-phase"
-      }`}
-    >
-      {p}
-    </button>
-  ))}
-</div>
+        {phases.map((p) => (
+          <button
+            key={p}
+            onClick={() => setSelectedPhase(p)}
+            className={`px-4 py-2 rounded-md border font-semibold transition duration-200 ${
+              selectedPhase === p
+                ? "selected-phase"
+                : "unselected-phase"
+            }`}
+          >
+            {p}
+          </button>
+        ))}
+      </div>
 
       <button
         onClick={handleCalculate}
-        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
       >
         Calculate
       </button>
