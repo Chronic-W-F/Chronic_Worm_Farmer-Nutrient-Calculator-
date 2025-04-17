@@ -161,6 +161,11 @@ return ( <div className="p-6 max-w-2xl mx-auto bg-white shadow-xl rounded-xl bor
   <pre className="whitespace-pre-wrap mt-6 p-4 bg-gray-100 border-l-4 border-green-500 text-lg font-mono rounded-md shadow">
     {flushPhrase ? `${flushPhrase} 🥴` : result}
   </pre>
+
+  {/* Safelist Tailwind green highlight classes */}
+  <div className="hidden">
+    bg-green-600 text-white border-green-700 font-bold
+  </div>
 </div>
 
 ); }
