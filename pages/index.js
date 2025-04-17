@@ -134,36 +134,17 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
   </div>
 
   <div className="flex flex-wrap gap-2 mb-4">
-    <button
-      onClick={() => setSelectedPhase("Veg")}
-      className={`px-4 py-2 rounded-md border ${selectedPhase === "Veg" ? "bg-green-600 text-white border-green-700 font-bold" : "bg-white text-gray-700 border-gray-300"}`}
-    >
-      Veg
-    </button>
-    <button
-      onClick={() => setSelectedPhase("Early")}
-      className={`px-4 py-2 rounded-md border ${selectedPhase === "Early" ? "bg-green-600 text-white border-green-700 font-bold" : "bg-white text-gray-700 border-gray-300"}`}
-    >
-      Early
-    </button>
-    <button
-      onClick={() => setSelectedPhase("Mid")}
-      className={`px-4 py-2 rounded-md border ${selectedPhase === "Mid" ? "bg-green-600 text-white border-green-700 font-bold" : "bg-white text-gray-700 border-gray-300"}`}
-    >
-      Mid
-    </button>
-    <button
-      onClick={() => setSelectedPhase("Late")}
-      className={`px-4 py-2 rounded-md border ${selectedPhase === "Late" ? "bg-green-600 text-white border-green-700 font-bold" : "bg-white text-gray-700 border-gray-300"}`}
-    >
-      Late
-    </button>
-    <button
-      onClick={() => setSelectedPhase("Flush")}
-      className={`px-4 py-2 rounded-md border ${selectedPhase === "Flush" ? "bg-green-600 text-white border-green-700 font-bold" : "bg-white text-gray-700 border-gray-300"}`}
-    >
-      Flush
-    </button>
+    {phases.map((p) => (
+      <button
+        key={p}
+        onClick={() => setSelectedPhase(p)}
+        className={`px-4 py-2 rounded-md border font-semibold transition duration-200 ${
+          selectedPhase === p ? "selected-phase" : "unselected-phase"
+        }`}
+      >
+        {p}
+      </button>
+    ))}
   </div>
 
   <button
@@ -176,10 +157,6 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
   <pre className="whitespace-pre-wrap mt-6 text-lg font-medium">
     {flushPhrase ? `${flushPhrase} 🥴` : result}
   </pre>
-
-  <div className="hidden">
-    bg-green-600 text-white border-green-700
-  </div>
 </div>
 
 ); }
