@@ -134,22 +134,36 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
   </div>
 
   <div className="flex flex-wrap gap-2 mb-4">
-    {phases.map((p) => {
-      const isSelected = selectedPhase === p;
-      const btnClass = isSelected
-        ? "px-4 py-2 rounded-md border font-bold bg-green-600 text-white border-green-700"
-        : "px-4 py-2 rounded-md border font-semibold bg-white text-gray-700 border-gray-300 hover:bg-gray-100";
-
-      return (
-        <button
-          key={p}
-          onClick={() => setSelectedPhase(p)}
-          className={btnClass}
-        >
-          {p}
-        </button>
-      );
-    })}
+    <button
+      onClick={() => setSelectedPhase("Veg")}
+      className={`px-4 py-2 rounded-md border ${selectedPhase === "Veg" ? "bg-green-600 text-white border-green-700 font-bold" : "bg-white text-gray-700 border-gray-300"}`}
+    >
+      Veg
+    </button>
+    <button
+      onClick={() => setSelectedPhase("Early")}
+      className={`px-4 py-2 rounded-md border ${selectedPhase === "Early" ? "bg-green-600 text-white border-green-700 font-bold" : "bg-white text-gray-700 border-gray-300"}`}
+    >
+      Early
+    </button>
+    <button
+      onClick={() => setSelectedPhase("Mid")}
+      className={`px-4 py-2 rounded-md border ${selectedPhase === "Mid" ? "bg-green-600 text-white border-green-700 font-bold" : "bg-white text-gray-700 border-gray-300"}`}
+    >
+      Mid
+    </button>
+    <button
+      onClick={() => setSelectedPhase("Late")}
+      className={`px-4 py-2 rounded-md border ${selectedPhase === "Late" ? "bg-green-600 text-white border-green-700 font-bold" : "bg-white text-gray-700 border-gray-300"}`}
+    >
+      Late
+    </button>
+    <button
+      onClick={() => setSelectedPhase("Flush")}
+      className={`px-4 py-2 rounded-md border ${selectedPhase === "Flush" ? "bg-green-600 text-white border-green-700 font-bold" : "bg-white text-gray-700 border-gray-300"}`}
+    >
+      Flush
+    </button>
   </div>
 
   <button
@@ -163,7 +177,6 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     {flushPhrase ? `${flushPhrase} 🥴` : result}
   </pre>
 
-  {/* Safelist green styles for Tailwind purge */}
   <div className="hidden">
     bg-green-600 text-white border-green-700
   </div>
