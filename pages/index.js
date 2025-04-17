@@ -138,9 +138,9 @@ return ( <div className="p-6 max-w-2xl mx-auto bg-white shadow-xl rounded-xl bor
       <button
         key={p}
         onClick={() => setSelectedPhase(p)}
-        className={`px-4 py-2 rounded-md font-semibold border shadow-sm transition duration-200 ${
+        className={`px-4 py-2 rounded-md font-semibold border transition duration-200 ${
           selectedPhase === p
-            ? "bg-green-600 text-white border-green-700"
+            ? "bg-green-600 text-white border-green-700 font-bold"
             : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
         }`}
       >
