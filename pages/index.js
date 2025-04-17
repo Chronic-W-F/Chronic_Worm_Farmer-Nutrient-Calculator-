@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const phases = ["Veg", "Early", "Mid", "Late", "Flush"]; const systems = [ "GH Maxi Series (Powder)", "GH 3-Part + KoolBloom (Liquid)", "MasterBlend 3-Part (Powder)", "Jacks 3-2-1 (Coming Soon)", "Athena Pro Line (Coming Soon)", "FoxFarm Solubles (Coming Soon)" ];
+const phases = ["Veg", "Early", "Mid", "Late", "Flush"]; const systems = [ "GH Maxi Series (Powder)", "GH 3-Part + KoolBloom (Liquid)", "MasterBlend 3-Part (Powder)", ];
 
 export default function Home() { const [startingEC, setStartingEC] = useState(""); const [targetEC, setTargetEC] = useState(""); const [water, setWater] = useState(1); const [selectedPhase, setSelectedPhase] = useState("Veg"); const [system, setSystem] = useState(systems[0]); const [result, setResult] = useState(""); const [flushPhrase, setFlushPhrase] = useState("");
 
@@ -82,66 +82,64 @@ setResult(output);
 
 };
 
-return ( <div className="p-6 max-w-2xl mx-auto bg-white shadow-xl rounded-xl border border-green-300"> <h1 className="text-4xl font-extrabold mb-6 text-center text-green-700"> Chronic Worm Farmer Nutrient Calculator </h1>
+return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bold mb-6 text-center"> Chronic Worm Farmer Nutrient Calculator </h1>
 
-<div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-    <div>
-      <label className="block font-semibold mb-1">Starting EC <span className="text-gray-500 text-sm">(optional)</span></label>
-      <input
-        type="number"
-        value={startingEC}
-        onChange={(e) => setStartingEC(e.target.value)}
-        className="w-full border p-2 rounded shadow"
-        placeholder="e.g. 1.2"
-      />
-    </div>
-
-    <div>
-      <label className="block font-semibold mb-1">Target EC</label>
-      <input
-        type="number"
-        value={targetEC}
-        onChange={(e) => setTargetEC(e.target.value)}
-        className="w-full border p-2 rounded shadow"
-        placeholder="e.g. 2.5"
-      />
-    </div>
-
-    <div>
-      <label className="block font-semibold mb-1">Total Water (Gallons)</label>
-      <input
-        type="number"
-        value={water}
-        onChange={(e) => setWater(e.target.value)}
-        className="w-full border p-2 rounded shadow"
-        min={1}
-        max={100}
-      />
-    </div>
-
-    <div>
-      <label className="block font-semibold mb-1">Nutrient System</label>
-      <select
-        value={system}
-        onChange={(e) => setSystem(e.target.value)}
-        className="w-full border p-2 rounded shadow"
-      >
-        {systems.map((s) => (
-          <option key={s} value={s}>{s}</option>
-        ))}
-      </select>
-    </div>
+<div className="mb-4">
+    <label className="block font-semibold mb-1">
+      Starting EC <span className="text-gray-500 text-sm">(optional)</span>
+    </label>
+    <input
+      type="number"
+      value={startingEC}
+      onChange={(e) => setStartingEC(e.target.value)}
+      className="w-full border p-2 rounded"
+      placeholder="e.g. 1.2"
+    />
   </div>
 
-  <div className="flex flex-wrap gap-2 justify-center mb-6">
+  <div className="mb-4">
+    <label className="block font-semibold mb-1">Target EC</label>
+    <input
+      type="number"
+      value={targetEC}
+      onChange={(e) => setTargetEC(e.target.value)}
+      className="w-full border p-2 rounded"
+      placeholder="e.g. 2.5"
+    />
+  </div>
+
+  <div className="mb-4">
+    <label className="block font-semibold mb-1">Total Water (Gallons)</label>
+    <input
+      type="number"
+      value={water}
+      onChange={(e) => setWater(e.target.value)}
+      className="w-full border p-2 rounded"
+      min={1}
+      max={100}
+    />
+  </div>
+
+  <div className="mb-4">
+    <label className="block font-semibold mb-1">Nutrient System</label>
+    <select
+      value={system}
+      onChange={(e) => setSystem(e.target.value)}
+      className="w-full border p-2 rounded"
+    >
+      {systems.map((s) => (
+        <option key={s} value={s}>{s}</option>
+      ))}
+    </select>
+  </div>
+
+  <div className="flex flex-wrap gap-2 mb-4">
     {phases.map((p) => (
       <button
         key={p}
         onClick={() => setSelectedPhase(p)}
-        className={`px-4 py-2 rounded-md font-semibold border transition duration-200 ${
-          selectedPhase === p
-            ? "bg-green-600 text-white border-green-700 font-bold"
-            : "bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
+        className={`px-4 py-2 rounded-md border font-semibold transition duration-200 ${
+          selectedPhase === p ? "bg-green-600 text-white" : "bg-white text-gray-700"
         }`}
       >
         {p}
@@ -149,23 +147,16 @@ return ( <div className="p-6 max-w-2xl mx-auto bg-white shadow-xl rounded-xl bor
     ))}
   </div>
 
-  <div className="text-center">
-    <button
-      onClick={handleCalculate}
-      className="bg-green-600 text-white px-6 py-3 rounded-lg shadow hover:bg-green-700 transition"
-    >
-      Calculate
-    </button>
-  </div>
+  <button
+    onClick={handleCalculate}
+    className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+  >
+    Calculate
+  </button>
 
-  <pre className="whitespace-pre-wrap mt-6 p-4 bg-gray-100 border-l-4 border-green-500 text-lg font-mono rounded-md shadow">
+  <pre className="whitespace-pre-wrap mt-6 text-lg font-medium">
     {flushPhrase ? `${flushPhrase} 🥴` : result}
   </pre>
-
-  {/* Safelist Tailwind green highlight classes */}
-  <div className="hidden">
-    bg-green-600 text-white border-green-700 font-bold
-  </div>
 </div>
 
 ); }
