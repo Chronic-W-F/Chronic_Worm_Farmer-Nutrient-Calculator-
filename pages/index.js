@@ -162,6 +162,11 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
   <pre className="whitespace-pre-wrap mt-6 text-lg font-medium">
     {flushPhrase ? `${flushPhrase} 🥴` : result}
   </pre>
+
+  {/* Safelist green styles for Tailwind purge */}
+  <div className="hidden">
+    bg-green-600 text-white border-green-700
+  </div>
 </div>
 
 ); }
