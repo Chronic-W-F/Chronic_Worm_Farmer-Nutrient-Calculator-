@@ -119,112 +119,112 @@ export default function Home() {
         Chronic Worm Farmer Nutrient Calculator
       </h1>
 
-      <div className="mb-6">
-        <div className="flex items-center gap-4 mb-4">
-          <label className="font-semibold whitespace-nowrap">Starting EC / PPM</label>
-          <input
-            type="number"
-            value={startingEC}
-            onChange={(e) => setStartingEC(e.target.value)}
-            className="flex-grow border p-2 rounded"
-            placeholder="e.g. 1.2 or 600"
-          />
-        </div>
-
-        <div className="w-full h-2 bg-black mb-4"></div>
-
-        <div className="flex items-center gap-4 mb-4">
-          <label className="font-semibold whitespace-nowrap">Target EC / PPM</label>
-          <input
-            type="number"
-            value={targetEC}
-            onChange={(e) => setTargetEC(e.target.value)}
-            className="flex-grow border p-2 rounded"
-            placeholder="e.g. 2.5 or 1250"
-          />
-        </div>
-
-        <div className="w-full h-2 bg-black mb-4"></div>
-
-        <div className="flex items-center gap-4 mb-4">
-          <label className="font-semibold whitespace-nowrap">Total Water (Gallons)</label>
-          <input
-            type="number"
-            value={water}
-            onChange={(e) => setWater(e.target.value)}
-            className="flex-grow border p-2 rounded"
-          />
-        </div>
-
-        <div className="w-full h-2 bg-black mb-4"></div>
-
-        <div className="mb-4">
-          <label className="font-semibold">Nutrient System</label>
-          <select
-            value={system}
-            onChange={(e) => setSystem(e.target.value)}
-            className="w-full border p-2 rounded"
-          >
-            {systems.map((s) => (
-              <option key={s} value={s}>{s}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="w-full h-2 bg-black mb-4"></div>
-
-        <div className="flex flex-wrap gap-2 mb-6">
-          {phases.map((p) => (
-            <button
-              key={p}
-              onClick={() => setSelectedPhase(p)}
-              className={`px-4 py-2 rounded-md border font-semibold transition duration-200 ${
-                selectedPhase === p ? "selected-phase" : "unselected-phase"
-              }`}
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-
-        <div className="w-full h-2 bg-black mb-4"></div>
-
-        <div className="flex gap-2 mb-6">
-          <button
-            onClick={handleCalculate}
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-          >
-            Calculate
-          </button>
-          <button
-            onClick={() => {
-              const confirmClear = window.confirm("Clear all fields?");
-              if (confirmClear) {
-                setStartingEC("");
-                setTargetEC("");
-                setWater(1);
-                setSelectedPhase("Veg");
-                setSystem(systems[0]);
-                setResult("");
-                setFlushPhrase("");
-              }
-            }}
-            className="bg-gray-300 text-gray-800 px-6 py-2 rounded hover:bg-gray-400"
-          >
-            Clear
-          </button>
-        </div>
-
-        {system && result && (
-          <div className="inline-block px-3 py-1 rounded-full text-sm font-semibold mb-2 bg-gray-200">
-            {system}
-          </div>
-        )}
-
-        <pre className="whitespace-pre-wrap mt-2 text-lg font-medium">
-          {flushPhrase ? `${flushPhrase} 🥴` : result}
-        </pre>
+      {/* STARTING EC */}
+      <div className="flex items-center gap-4 mb-4">
+        <label className="font-semibold whitespace-nowrap">Starting EC / PPM</label>
+        <input
+          type="number"
+          value={startingEC}
+          onChange={(e) => setStartingEC(e.target.value)}
+          className="flex-grow border p-2 rounded"
+          placeholder="e.g. 1.2 or 600"
+        />
       </div>
+      <div className="w-full h-1 bg-black my-3"></div>
+
+      {/* TARGET EC */}
+      <div className="flex items-center gap-4 mb-4">
+        <label className="font-semibold whitespace-nowrap">Target EC / PPM</label>
+        <input
+          type="number"
+          value={targetEC}
+          onChange={(e) => setTargetEC(e.target.value)}
+          className="flex-grow border p-2 rounded"
+          placeholder="e.g. 2.5 or 1250"
+        />
+      </div>
+      <div className="w-full h-1 bg-black my-3"></div>
+
+      {/* WATER */}
+      <div className="flex items-center gap-4 mb-4">
+        <label className="font-semibold whitespace-nowrap">Total Water (Gallons)</label>
+        <input
+          type="number"
+          value={water}
+          onChange={(e) => setWater(e.target.value)}
+          className="flex-grow border p-2 rounded"
+        />
+      </div>
+      <div className="w-full h-1 bg-black my-3"></div>
+
+      {/* SYSTEM */}
+      <div className="mb-4">
+        <label className="font-semibold">Nutrient System</label>
+        <select
+          value={system}
+          onChange={(e) => setSystem(e.target.value)}
+          className="w-full border p-2 rounded"
+        >
+          {systems.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+      </div>
+      <div className="w-full h-1 bg-black my-3"></div>
+
+      {/* PHASE BUTTONS */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {phases.map((p) => (
+          <button
+            key={p}
+            onClick={() => setSelectedPhase(p)}
+            className={`px-4 py-2 rounded-md border font-semibold transition duration-200 ${
+              selectedPhase === p ? "bg-green-600 text-white" : "bg-gray-200"
+            }`}
+          >
+            {p}
+          </button>
+        ))}
+      </div>
+      <div className="w-full h-1 bg-black my-3"></div>
+
+      {/* CALCULATE & CLEAR */}
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={handleCalculate}
+          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+        >
+          Calculate
+        </button>
+        <button
+          onClick={() => {
+            const confirmClear = window.confirm("Clear all fields?");
+            if (confirmClear) {
+              setStartingEC("");
+              setTargetEC("");
+              setWater(1);
+              setSelectedPhase("Veg");
+              setSystem(systems[0]);
+              setResult("");
+              setFlushPhrase("");
+            }
+          }}
+          className="bg-gray-300 text-gray-800 px-6 py-2 rounded hover:bg-gray-400"
+        >
+          Clear
+        </button>
+      </div>
+
+      {/* OUTPUT */}
+      {system && result && (
+        <div className="inline-block px-3 py-1 rounded-full text-sm font-semibold mb-2 bg-gray-200">
+          {system}
+        </div>
+      )}
+
+      <pre className="whitespace-pre-wrap mt-2 text-lg font-medium">
+        {flushPhrase ? `${flushPhrase} 🥴` : result}
+      </pre>
     </div>
   );
 }
