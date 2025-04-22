@@ -39,6 +39,14 @@ export default function Home() {
     "Water in. Wisdom out.",
   ];
 
+  // Converts string to EC; auto-detects PPM if input is large (>=100)
+  const parseEC = (value) => {
+    const num = parseFloat(value);
+    if (isNaN(num)) return 0;
+    if (num >= 100) return num / 500; // assumes 500 scale
+    return num;
+  };
+
   const handleCalculate = () => {
     if (selectedPhase === "Flush") {
       const pick = flushPhrases[Math.floor(Math.random() * flushPhrases.length)];
@@ -47,8 +55,8 @@ export default function Home() {
       return;
     }
 
-    const ecStart = parseFloat(startingEC) || 0;
-    const ecTarget = parseFloat(targetEC) || 0;
+    const ecStart = parseEC(startingEC);
+    const ecTarget = parseEC(targetEC);
     const gallons = parseFloat(water) || 1;
     const deltaEC = ecTarget - ecStart;
     const baseEC = 2.8;
@@ -63,9 +71,19 @@ export default function Home() {
         selectedPhase === "Mid" ? 2.8 :
         selectedPhase === "Late" ? 3.0 : 0;
 
-      gramsPerGal *= ecMultiplier;
+      let kool = 0;
+      if (selectedPhase === "Mid") kool = 0.6;
+      if (selectedPhase === "Late") kool = 1.2;
 
-      output = `MaxiGrow: ${(gramsPerGal * gallons).toFixed(2)}g total for ${gallons} gal`;
+      gramsPerGal *= ecMultiplier;
+      kool *= ecMultiplier;
+
+      const label = selectedPhase === "Veg" ? "MaxiGrow" : "MaxiBloom";
+      output = `${label}: ${(gramsPerGal * gallons).toFixed(2)}g total for ${gallons} gal`;
+
+      if (kool > 0) {
+        output += `\nKoolBloom: ${(kool * gallons).toFixed(2)}g total`;
+      }
 
     } else if (system.includes("MasterBlend")) {
       let mb = 0, cal = 0, epsom = 0;
@@ -112,6 +130,7 @@ export default function Home() {
       if (kool > 0) {
         output += `\nKoolBloom: ${(kool * gallons).toFixed(1)}mL total for ${gallons} gal`;
       }
+
     } else {
       output = `Selected system "${system}" is not yet supported.`;
     }
@@ -128,25 +147,25 @@ export default function Home() {
 
       <div className="mb-4">
         <label className="block font-semibold mb-1">
-          Starting EC <span className="text-gray-500 text-sm">(optional)</span>
+          Starting EC / PPM <span className="text-gray-500 text-sm">(e.g. 1.2 or 600)</span>
         </label>
         <input
           type="number"
           value={startingEC}
           onChange={(e) => setStartingEC(e.target.value)}
           className="w-full border p-2 rounded"
-          placeholder="e.g. 1.2"
+          placeholder="e.g. 1.2 or 600"
         />
       </div>
 
       <div className="mb-4">
-        <label className="block font-semibold mb-1">Target EC</label>
+        <label className="block font-semibold mb-1">Target EC / PPM</label>
         <input
           type="number"
           value={targetEC}
           onChange={(e) => setTargetEC(e.target.value)}
           className="w-full border p-2 rounded"
-          placeholder="e.g. 2.5"
+          placeholder="e.g. 2.5 or 1250"
         />
       </div>
 
