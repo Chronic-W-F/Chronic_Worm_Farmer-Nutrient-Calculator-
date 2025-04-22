@@ -1,15 +1,15 @@
 .selected-phase {
-  background-color: #22c55e; /* Tailwind green-500 */
+  background-color: #22c55e;
   color: white;
-  border-color: #15803d; /* Tailwind green-700 */
+  border-color: #15803d;
 }
 
 .unselected-phase {
   background-color: white;
-  color: #1f2937; /* Tailwind gray-800 */
-  border-color: #d1d5db; /* Tailwind gray-300 */
+  color: #1f2937;
+  border-color: #d1d5db;
 }
 
 .unselected-phase:hover {
-  background-color: #f3f4f6; /* Tailwind gray-100 */
+  background-color: #f3f4f6;
 }
