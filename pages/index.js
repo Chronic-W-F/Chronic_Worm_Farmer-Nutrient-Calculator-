@@ -38,7 +38,6 @@ if (system.includes("Maxi")) {
   if (kool > 0) {
     output += `\nKoolBloom: ${(kool * gallons).toFixed(2)}g total`;
   }
-
 } else if (system.includes("MasterBlend")) {
   let mb = 0, cal = 0, epsom = 0;
 
@@ -59,7 +58,6 @@ if (system.includes("Maxi")) {
   output = `MasterBlend: ${(mb * gallons).toFixed(2)}g total for ${gallons} gal\n`;
   output += `Calcium Nitrate: ${(cal * gallons).toFixed(2)}g total\n`;
   output += `Epsom Salt: ${(epsom * gallons).toFixed(2)}g total`;
-
 } else if (system.includes("Jacks")) {
   let jack = 3.6, cal = 2.4, epsom = 1.2;
 
@@ -70,7 +68,6 @@ if (system.includes("Maxi")) {
   output = `Jacks Part A: ${(jack * gallons).toFixed(2)}g total for ${gallons} gal\n`;
   output += `Calcium Nitrate: ${(cal * gallons).toFixed(2)}g total\n`;
   output += `Epsom Salt: ${(epsom * gallons).toFixed(2)}g total`;
-
 } else if (system.includes("GH 3-Part")) {
   let micro = 0, gro = 0, bloom = 0, kool = 0;
 
@@ -106,30 +103,31 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
 
 <hr className="my-6 border-t-[10px] border-black w-full" />
 
-  <div className="mb-4 flex items-center gap-4">
-    <label className="block font-semibold whitespace-nowrap">
-      Starting EC / PPM
-    </label>
-    <input
-      type="number"
-      value={startingEC}
-      onChange={(e) => setStartingEC(e.target.value)}
-      className="flex-grow border p-2 rounded"
-      placeholder="e.g. 1.2 or 600"
-    />
-  </div>
-
-  <div className="mb-4 flex items-center gap-4">
-    <label className="block font-semibold whitespace-nowrap">
-      Target EC / PPM
-    </label>
-    <input
-      type="number"
-      value={targetEC}
-      onChange={(e) => setTargetEC(e.target.value)}
-      className="flex-grow border p-2 rounded"
-      placeholder="e.g. 2.5 or 1250"
-    />
+  <div className="mb-4 flex flex-col gap-4">
+    <div className="flex items-center gap-4">
+      <label className="block font-semibold whitespace-nowrap">
+        Starting EC / PPM
+      </label>
+      <input
+        type="number"
+        value={startingEC}
+        onChange={(e) => setStartingEC(e.target.value)}
+        className="flex-grow border p-2 rounded"
+        placeholder="e.g. 1.2 or 600"
+      />
+    </div>
+    <div className="flex items-center gap-4">
+      <label className="block font-semibold whitespace-nowrap">
+        Target EC / PPM
+      </label>
+      <input
+        type="number"
+        value={targetEC}
+        onChange={(e) => setTargetEC(e.target.value)}
+        className="flex-grow border p-2 rounded"
+        placeholder="e.g. 2.5 or 1250"
+      />
+    </div>
   </div>
 
   <hr className="my-6 border-t-[10px] border-black w-full" />
