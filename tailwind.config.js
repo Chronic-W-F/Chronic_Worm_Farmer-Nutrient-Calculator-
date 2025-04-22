@@ -5,18 +5,10 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx}",
   ],
   safelist: [
-    {
-      pattern: /bg-(green|yellow|orange|red|blue)-\d{3}/,
-    },
-    {
-      pattern: /text-(white|black)/,
-    },
-    {
-      pattern: /border-(green|gray)-\d{3}/, // <--- Add this
-    },
-    {
-      pattern: /ring-(green|blue)-\d{3}/,
-    },
+    "border-t-4",
+    "border-black",
+    "bg-black",
+    "h-2",
   ],
   theme: {
     extend: {},
