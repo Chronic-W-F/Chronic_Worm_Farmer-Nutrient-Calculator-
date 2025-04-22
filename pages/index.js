@@ -38,7 +38,6 @@ if (system.includes("Maxi")) {
   if (kool > 0) {
     output += `\nKoolBloom: ${(kool * gallons).toFixed(2)}g total`;
   }
-
 } else if (system.includes("MasterBlend")) {
   let mb = 0, cal = 0, epsom = 0;
   if (selectedPhase === "Veg") {
@@ -54,14 +53,12 @@ if (system.includes("Maxi")) {
   cal *= ecMultiplier;
   epsom *= ecMultiplier;
   output = `MasterBlend: ${(mb * gallons).toFixed(2)}g total\nCalcium Nitrate: ${(cal * gallons).toFixed(2)}g\nEpsom Salt: ${(epsom * gallons).toFixed(2)}g`;
-
 } else if (system.includes("Jacks")) {
   let jack = 3.6, cal = 2.4, epsom = 1.2;
   jack *= ecMultiplier;
   cal *= ecMultiplier;
   epsom *= ecMultiplier;
   output = `Jacks Part A: ${(jack * gallons).toFixed(2)}g\nCalcium Nitrate: ${(cal * gallons).toFixed(2)}g\nEpsom Salt: ${(epsom * gallons).toFixed(2)}g`;
-
 } else if (system.includes("GH 3-Part")) {
   let micro = 0, gro = 0, bloom = 0, kool = 0;
   if (selectedPhase === "Veg") {
@@ -90,11 +87,9 @@ setResult(output);
 
 return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bold mb-6 text-center"> Chronic Worm Farmer Nutrient Calculator </h1>
 
-<div className="mb-6">
-    <div className="flex items-center gap-4 mb-4">
-      <label className="font-semibold whitespace-nowrap">
-        Starting EC / PPM
-      </label>
+<div className="mb-6 space-y-4">
+    <div className="flex items-center gap-2">
+      <label className="font-semibold whitespace-nowrap">Starting EC / PPM</label>
       <input
         type="number"
         value={startingEC}
@@ -103,13 +98,10 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
         placeholder="e.g. 1.2 or 600"
       />
     </div>
+    <hr className="border-black border-4" />
 
-    <div className="w-full h-2 bg-black mb-4"></div>
-
-    <div className="flex items-center gap-4 mb-4">
-      <label className="font-semibold whitespace-nowrap">
-        Target EC / PPM
-      </label>
+    <div className="flex items-center gap-2">
+      <label className="font-semibold whitespace-nowrap">Target EC / PPM</label>
       <input
         type="number"
         value={targetEC}
@@ -118,13 +110,10 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
         placeholder="e.g. 2.5 or 1250"
       />
     </div>
+    <hr className="border-black border-4" />
 
-    <div className="w-full h-2 bg-black mb-4"></div>
-
-    <div className="flex items-center gap-4 mb-4">
-      <label className="font-semibold whitespace-nowrap">
-        Total Water (Gallons)
-      </label>
+    <div className="flex items-center gap-2">
+      <label className="font-semibold whitespace-nowrap">Total Water (Gallons)</label>
       <input
         type="number"
         value={water}
@@ -132,10 +121,9 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
         className="flex-grow border p-2 rounded"
       />
     </div>
+    <hr className="border-black border-4" />
 
-    <div className="w-full h-2 bg-black mb-4"></div>
-
-    <div className="mb-4">
+    <div>
       <label className="font-semibold">Nutrient System</label>
       <select
         value={system}
@@ -147,10 +135,9 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
         ))}
       </select>
     </div>
+    <hr className="border-black border-4" />
 
-    <div className="w-full h-2 bg-black mb-4"></div>
-
-    <div className="flex flex-wrap gap-2 mb-6">
+    <div className="flex flex-wrap gap-2">
       {phases.map((p) => (
         <button
           key={p}
@@ -164,7 +151,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
       ))}
     </div>
 
-    <div className="flex gap-2 mb-6">
+    <div className="flex gap-2">
       <button
         onClick={handleCalculate}
         className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
@@ -191,12 +178,12 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     </div>
 
     {system && result && (
-      <div className="inline-block px-3 py-1 rounded-full text-sm font-semibold mb-2 bg-gray-200">
+      <div className="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-gray-200">
         {system}
       </div>
     )}
 
-    <pre className="whitespace-pre-wrap mt-2 text-lg font-medium">
+    <pre className="whitespace-pre-wrap text-lg font-medium">
       {flushPhrase ? `${flushPhrase} 🥴` : result}
     </pre>
   </div>
