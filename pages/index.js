@@ -87,8 +87,8 @@ setResult(output);
 
 return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bold mb-6 text-center"> Chronic Worm Farmer Nutrient Calculator </h1>
 
-<div className="mb-6 space-y-4">
-    <div className="flex items-center gap-4">
+<div className="mb-6">
+    <div className="flex items-center gap-4 mb-4">
       <label className="font-semibold whitespace-nowrap">Starting EC / PPM</label>
       <input
         type="number"
@@ -98,9 +98,10 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
         placeholder="e.g. 1.2 or 600"
       />
     </div>
-    <hr className="border-black border-4" />
 
-    <div className="flex items-center gap-4">
+    <div className="w-full h-1 bg-black mb-4"></div>
+
+    <div className="flex items-center gap-4 mb-4">
       <label className="font-semibold whitespace-nowrap">Target EC / PPM</label>
       <input
         type="number"
@@ -110,9 +111,10 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
         placeholder="e.g. 2.5 or 1250"
       />
     </div>
-    <hr className="border-black border-4" />
 
-    <div className="flex items-center gap-4">
+    <div className="w-full h-1 bg-black mb-4"></div>
+
+    <div className="flex items-center gap-4 mb-4">
       <label className="font-semibold whitespace-nowrap">Total Water (Gallons)</label>
       <input
         type="number"
@@ -121,23 +123,25 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
         className="flex-grow border p-2 rounded"
       />
     </div>
-    <hr className="border-black border-4" />
 
-    <div>
+    <div className="w-full h-1 bg-black mb-4"></div>
+
+    <div className="mb-4">
       <label className="font-semibold">Nutrient System</label>
       <select
         value={system}
         onChange={(e) => setSystem(e.target.value)}
-        className="w-full border p-2 rounded mt-1"
+        className="w-full border p-2 rounded"
       >
         {systems.map((s) => (
           <option key={s} value={s}>{s}</option>
         ))}
       </select>
     </div>
-    <hr className="border-black border-4" />
 
-    <div className="flex flex-wrap gap-2">
+    <div className="w-full h-1 bg-black mb-4"></div>
+
+    <div className="flex flex-wrap gap-2 mb-6">
       {phases.map((p) => (
         <button
           key={p}
@@ -150,9 +154,10 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
         </button>
       ))}
     </div>
-    <hr className="border-black border-4" />
 
-    <div className="flex gap-2">
+    <div className="w-full h-1 bg-black mb-4"></div>
+
+    <div className="flex gap-2 mb-6">
       <button
         onClick={handleCalculate}
         className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
