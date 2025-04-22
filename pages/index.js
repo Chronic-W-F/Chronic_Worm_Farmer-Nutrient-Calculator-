@@ -106,29 +106,33 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
 
 <hr className="my-6 border-t-8 border-black w-full" />
 
-  <div className="mb-4">
-    <label className="block font-semibold mb-1">
-      Starting EC / PPM <span className="text-gray-500 text-sm">(e.g. 1.2 or 600)</span>
+  <div className="mb-4 flex items-center gap-4">
+    <label className="block font-semibold whitespace-nowrap">
+      Starting EC / PPM
     </label>
     <input
       type="number"
       value={startingEC}
       onChange={(e) => setStartingEC(e.target.value)}
-      className="w-full border p-2 rounded"
+      className="flex-grow border p-2 rounded"
       placeholder="e.g. 1.2 or 600"
     />
   </div>
 
-  <div className="mb-4">
-    <label className="block font-semibold mb-1">Target EC / PPM</label>
+  <div className="mb-4 flex items-center gap-4">
+    <label className="block font-semibold whitespace-nowrap">
+      Target EC / PPM
+    </label>
     <input
       type="number"
       value={targetEC}
       onChange={(e) => setTargetEC(e.target.value)}
-      className="w-full border p-2 rounded"
+      className="flex-grow border p-2 rounded"
       placeholder="e.g. 2.5 or 1250"
     />
   </div>
+
+  <hr className="my-6 border-t-8 border-black w-full" />
 
   <div className="mb-4">
     <label className="block font-semibold mb-1">Total Water (Gallons)</label>
