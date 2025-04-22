@@ -5,17 +5,11 @@
 }
 
 .unselected-phase {
-  background-color: #e5e7eb; /* Tailwind gray-200 */
-  color: #1f2937;            /* Tailwind gray-800 */
-  border-color: #d1d5db;     /* Tailwind gray-300 */
+  background-color: white;
+  color: #1f2937; /* Tailwind gray-800 */
+  border-color: #d1d5db; /* Tailwind gray-300 */
 }
 
 .unselected-phase:hover {
   background-color: #f3f4f6; /* Tailwind gray-100 */
-}
-
-/* Optional: Set consistent font and spacing */
-body {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
-  line-height: 1.5;
 }
