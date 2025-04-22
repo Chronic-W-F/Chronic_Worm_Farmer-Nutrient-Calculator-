@@ -104,7 +104,7 @@ setResult(output);
 
 return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bold mb-6 text-center"> Chronic Worm Farmer Nutrient Calculator </h1>
 
-<hr className="my-6 border-t-8 border-black w-full" />
+<hr className="my-6 border-t-[10px] border-black w-full" />
 
   <div className="mb-4 flex items-center gap-4">
     <label className="block font-semibold whitespace-nowrap">
@@ -132,7 +132,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     />
   </div>
 
-  <hr className="my-6 border-t-8 border-black w-full" />
+  <hr className="my-6 border-t-[10px] border-black w-full" />
 
   <div className="mb-4">
     <label className="block font-semibold mb-1">Total Water (Gallons)</label>
@@ -146,7 +146,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     />
   </div>
 
-  <hr className="my-6 border-t-8 border-black w-full" />
+  <hr className="my-6 border-t-[10px] border-black w-full" />
 
   <div className="mb-4">
     <label className="block font-semibold mb-1">Nutrient System</label>
@@ -161,7 +161,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     </select>
   </div>
 
-  <hr className="my-6 border-t-8 border-black w-full" />
+  <hr className="my-6 border-t-[10px] border-black w-full" />
 
   <div className="flex flex-wrap gap-2 mb-8">
     {phases.map((p) => (
@@ -177,7 +177,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     ))}
   </div>
 
-  <hr className="my-6 border-t-8 border-black w-full" />
+  <hr className="my-6 border-t-[10px] border-black w-full" />
 
   <div className="flex gap-2 mb-6">
     <button
@@ -205,7 +205,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     </button>
   </div>
 
-  <hr className="my-6 border-t-8 border-black w-full" />
+  <hr className="my-6 border-t-[10px] border-black w-full" />
 
   {system && result && (
     <div
