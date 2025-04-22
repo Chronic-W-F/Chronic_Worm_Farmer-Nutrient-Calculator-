@@ -88,7 +88,7 @@ setResult(output);
 return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bold mb-6 text-center"> Chronic Worm Farmer Nutrient Calculator </h1>
 
 <div className="mb-6 space-y-4">
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-4">
       <label className="font-semibold whitespace-nowrap">Starting EC / PPM</label>
       <input
         type="number"
@@ -100,7 +100,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     </div>
     <hr className="border-black border-4" />
 
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-4">
       <label className="font-semibold whitespace-nowrap">Target EC / PPM</label>
       <input
         type="number"
@@ -112,7 +112,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     </div>
     <hr className="border-black border-4" />
 
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-4">
       <label className="font-semibold whitespace-nowrap">Total Water (Gallons)</label>
       <input
         type="number"
@@ -128,7 +128,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
       <select
         value={system}
         onChange={(e) => setSystem(e.target.value)}
-        className="w-full border p-2 rounded"
+        className="w-full border p-2 rounded mt-1"
       >
         {systems.map((s) => (
           <option key={s} value={s}>{s}</option>
@@ -150,6 +150,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
         </button>
       ))}
     </div>
+    <hr className="border-black border-4" />
 
     <div className="flex gap-2">
       <button
@@ -178,12 +179,12 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     </div>
 
     {system && result && (
-      <div className="inline-block px-3 py-1 rounded-full text-sm font-semibold bg-gray-200">
+      <div className="inline-block px-3 py-1 rounded-full text-sm font-semibold mb-2 bg-gray-200">
         {system}
       </div>
     )}
 
-    <pre className="whitespace-pre-wrap text-lg font-medium">
+    <pre className="whitespace-pre-wrap mt-2 text-lg font-medium">
       {flushPhrase ? `${flushPhrase} 🥴` : result}
     </pre>
   </div>
