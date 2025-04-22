@@ -1,3 +1,4 @@
+/* Phase button highlight */
 .selected-phase {
   background-color: #22c55e; /* Tailwind green-500 */
   color: white;
@@ -12,4 +13,12 @@
 
 .unselected-phase:hover {
   background-color: #f3f4f6; /* Tailwind gray-100 */
+}
+
+/* Divider line between sections */
+.divider-line {
+  width: 100%;
+  height: 8px; /* Thicker line */
+  background-color: black;
+  margin-bottom: 1rem;
 }
