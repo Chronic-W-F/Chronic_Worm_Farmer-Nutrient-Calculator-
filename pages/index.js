@@ -179,7 +179,7 @@ export default function Home() {
               key={p}
               onClick={() => setSelectedPhase(p)}
               className={`px-4 py-2 rounded-md border font-semibold transition duration-200 ${
-                selectedPhase === p ? "bg-green-600 text-white" : "bg-gray-200"
+                selectedPhase === p ? "selected-phase" : "unselected-phase"
               }`}
             >
               {p}
