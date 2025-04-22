@@ -1,4 +1,3 @@
-/* Phase button highlight */
 .selected-phase {
   background-color: #22c55e; /* Tailwind green-500 */
   color: white;
@@ -6,19 +5,17 @@
 }
 
 .unselected-phase {
-  background-color: white;
-  color: #1f2937; /* Tailwind gray-800 */
-  border-color: #d1d5db; /* Tailwind gray-300 */
+  background-color: #e5e7eb; /* Tailwind gray-200 */
+  color: #1f2937;            /* Tailwind gray-800 */
+  border-color: #d1d5db;     /* Tailwind gray-300 */
 }
 
 .unselected-phase:hover {
   background-color: #f3f4f6; /* Tailwind gray-100 */
 }
 
-/* Divider line between sections */
-.divider-line {
-  width: 100%;
-  height: 8px; /* Thicker line */
-  background-color: black;
-  margin-bottom: 1rem;
+/* Optional: Set consistent font and spacing */
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  line-height: 1.5;
 }
