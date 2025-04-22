@@ -38,6 +38,7 @@ if (system.includes("Maxi")) {
   if (kool > 0) {
     output += `\nKoolBloom: ${(kool * gallons).toFixed(2)}g total`;
   }
+
 } else if (system.includes("MasterBlend")) {
   let mb = 0, cal = 0, epsom = 0;
   if (selectedPhase === "Veg") {
@@ -53,12 +54,14 @@ if (system.includes("Maxi")) {
   cal *= ecMultiplier;
   epsom *= ecMultiplier;
   output = `MasterBlend: ${(mb * gallons).toFixed(2)}g total\nCalcium Nitrate: ${(cal * gallons).toFixed(2)}g\nEpsom Salt: ${(epsom * gallons).toFixed(2)}g`;
+
 } else if (system.includes("Jacks")) {
   let jack = 3.6, cal = 2.4, epsom = 1.2;
   jack *= ecMultiplier;
   cal *= ecMultiplier;
   epsom *= ecMultiplier;
   output = `Jacks Part A: ${(jack * gallons).toFixed(2)}g\nCalcium Nitrate: ${(cal * gallons).toFixed(2)}g\nEpsom Salt: ${(epsom * gallons).toFixed(2)}g`;
+
 } else if (system.includes("GH 3-Part")) {
   let micro = 0, gro = 0, bloom = 0, kool = 0;
   if (selectedPhase === "Veg") {
