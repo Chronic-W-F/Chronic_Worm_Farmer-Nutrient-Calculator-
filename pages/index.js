@@ -153,7 +153,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     </select>
   </div>
 
-  <div className="h-2 bg-black my-4 rounded" />
+  <div className="my-4 border-t-4 border-black rounded" />
 
   <div className="flex flex-wrap gap-2 mb-8">
     {phases.map((p) => (
@@ -169,7 +169,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     ))}
   </div>
 
-  <div className="h-2 bg-black my-4 rounded" />
+  <div className="my-4 border-t-4 border-black rounded" />
 
   <div className="flex gap-2 mb-6">
     <button
@@ -197,7 +197,7 @@ return ( <div className="p-6 max-w-xl mx-auto"> <h1 className="text-3xl font-bol
     </button>
   </div>
 
-  <div className="h-2 bg-black my-4 rounded" />
+  <div className="my-4 border-t-4 border-black rounded" />
 
   {system && result && (
     <div
